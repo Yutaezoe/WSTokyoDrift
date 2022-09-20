@@ -10,8 +10,8 @@ namespace Common
         public static Transform[] GetChildren(Transform parent)
         {
             // 子オブジェクトを格納する配列作成
-            var children = new Transform[parent.childCount];
-            var childIndex = 0;
+            Transform[] children = new Transform[parent.childCount];
+            int childIndex = 0;
 
             // 子オブジェクトを順番に配列に格納
             foreach (Transform child in parent)
