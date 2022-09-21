@@ -48,7 +48,7 @@ public class Target : MonoBehaviour
         bool result = Regex.IsMatch(collider.gameObject.name, "Bus*");
         if (result)
         {
-            Debug.Log(collider.gameObject.name);
+            //Debug.Log(collider.gameObject.name);
             //Destroy(gameObject);
         }
         

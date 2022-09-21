@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Common;
+using System.Linq;
+
 public class Atest : MonoBehaviour
 {
     [SerializeField]
@@ -20,6 +22,14 @@ public class Atest : MonoBehaviour
     private Line LineArray;
     private GameObject NodeGO;
     private Node NodeArray;
+
+
+    [SerializeField]
+    private GameObject nodeMasterGO;
+    private Transform[] nodeChildren;
+    
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -47,6 +57,14 @@ public class Atest : MonoBehaviour
 
         lineChildren = ComFunctions.GetChildren(gc3.transform);
 
+
+        nodeChildren = ComFunctions.GetChildren(nodeMasterGO.transform);
+
+
+        int[] nodep = new int[nodeChildren.Length*2];
+
+        Debug.Log(nodep.Length);
+
         foreach (Transform setTrans in lineChildren)
         {
 
@@ -56,7 +74,9 @@ public class Atest : MonoBehaviour
 
             NodeGO = LineArray.getAPosition.gameObject;
             NodeArray = NodeGO.GetComponent<Node>();
-            Debug.Log(NodeArray.getNodeUID);
+            
+            
+            //Debug.Log(NodeArray.getNodeUID);
             
         };
 
