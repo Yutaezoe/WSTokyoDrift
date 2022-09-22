@@ -48,7 +48,7 @@ public class Atest : MonoBehaviour
         targetArray = targetGO.GetComponent<Target>();
 
         
-        Debug.Log(targetArray.TargetUid);
+        //Debug.Log(targetArray.TargetUid);
 
         //Debug.Log(targetGC[1].gameObject.name);
 
@@ -63,7 +63,7 @@ public class Atest : MonoBehaviour
 
         int[] nodep = new int[nodeChildren.Length*2];
 
-        Debug.Log(nodep.Length);
+        //Debug.Log(nodep.Length);
 
         foreach (Transform setTrans in lineChildren)
         {

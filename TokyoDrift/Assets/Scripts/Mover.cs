@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Common;
+using System.Linq;
 
 public class Mover : MonoBehaviour
 {
@@ -14,6 +15,16 @@ public class Mover : MonoBehaviour
     private Transform startNodePoint;
     [SerializeField]
     private Transform[] nodePoints;
+
+    // Ezoe edit
+    [SerializeField]
+    private GameObject lineMaster;
+
+    private Transform[] lineChildren;
+    private int[] routeReturn;
+    //
+
+
 
     private Vector3[] nodeVector;
     private Vector3 startNodeVector;
@@ -31,7 +42,13 @@ public class Mover : MonoBehaviour
         startNodeVector = startNodePoint.position;
         startNodeVector.y = 0.25f;
         transform.position = startNodeVector;
-      //  SearchTarget search = new SearchTarget(nodePoints.Length);
+        //  SearchTarget search = new SearchTarget(nodePoints.Length);
+
+        // Ezoe Edit
+        lineChildren = ComFunctions.GetChildren(lineMaster.transform);
+        //
+
+
     }
 
 
@@ -47,6 +64,9 @@ public class Mover : MonoBehaviour
         }
         nodeCounter = 0;
 
+        //Ezoe
+        CalcDikstra(2, 5);
+        //Ezoe
     }
 
     // Update is called once per frame
@@ -78,6 +98,67 @@ public class Mover : MonoBehaviour
                 nodeCounter++;
             }
         }
+    }
+
+    //Ezoe
+    private void CalcDikstra(int start,int goal)
+    {
+
+        GameObject lineGO;
+        GameObject nodeGO;
+        Line lineArray;
+        Node nodeArray;
+        int lineWeight;
+        int pointA;
+        int pointB;
+
+
+        List<string> Nodename = new List<string>();
+
+        Dikstra graph = new Dikstra(lineChildren.Length + 1);
+
+        foreach (Transform setTrans in lineChildren)
+        {
+            //子ラインから、ライン重み、poinA,Bを配列に格納
+            
+            lineGO = setTrans.gameObject;
+            lineArray = lineGO.GetComponent<Line>();
+            lineWeight = lineArray.getLineWeight;
+
+
+            nodeGO = lineArray.getAPosition.gameObject;
+            nodeArray = nodeGO.GetComponent<Node>();
+            pointA = nodeArray.getNodeUID;
+            Nodename.Add(nodeGO.name);
+
+
+            nodeGO = lineArray.getBPosition.gameObject;
+            nodeArray = nodeGO.GetComponent<Node>();
+            pointB = nodeArray.getNodeUID;
+            Nodename.Add(nodeGO.name);
+
+            graph.Add(pointA, pointB, lineWeight);
+            graph.Add(pointB, pointA, lineWeight);
+        };
+        string[] arrayStrings = Nodename.ToArray();
+
+        IEnumerable<string> enumArray = arrayStrings.Distinct();
+
+        
+        long[] minDistaces = graph.GetMinCost(start, goal, enumArray.Count());
+
+        foreach(long c in graph.Cost)
+        {
+            //Debug.Log(c);
+        }
+        foreach (int r in graph.RouteReturn)
+        {
+            Debug.Log(r);
+        }
+
+
+        routeReturn = graph.RouteReturn;
+
     }
 
 

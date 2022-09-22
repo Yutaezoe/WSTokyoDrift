@@ -670,7 +670,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointA: {fileID: 847460981}
   pointB: {fileID: 1193398404}
-  lineWeight: 1
+  lineWeight: 5
 --- !u!1 &1251036685 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5853119814547032016, guid: 5195101de59b6ea45ac9ff90a69e5297, type: 3}
@@ -913,6 +913,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nodeUID: 4
+--- !u!1 &1680898178 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2809610954882233176, guid: 8446df286401872409b78c94520f4630, type: 3}
+  m_PrefabInstance: {fileID: 2809610956546693692}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1680898184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1680898178}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7955837611f52b41b3e1445c670a48b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gc3: {fileID: 1740214620}
 --- !u!1 &1740214620 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5853119814452571752, guid: 5195101de59b6ea45ac9ff90a69e5297, type: 3}
@@ -975,6 +993,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 488013021837443308, guid: 8446df286401872409b78c94520f4630, type: 3}
+      propertyPath: lineMaster
+      value: 
+      objectReference: {fileID: 1740214620}
     - target: {fileID: 488013021837443308, guid: 8446df286401872409b78c94520f4630, type: 3}
       propertyPath: startNodePoint
       value: 
@@ -1224,6 +1246,10 @@ PrefabInstance:
       value: -3
       objectReference: {fileID: 0}
     - target: {fileID: 5853119814322285387, guid: 5195101de59b6ea45ac9ff90a69e5297, type: 3}
+      propertyPath: m_Positions.Array.data[1].y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5853119814322285387, guid: 5195101de59b6ea45ac9ff90a69e5297, type: 3}
       propertyPath: m_Positions.Array.data[1].z
       value: 3
       objectReference: {fileID: 0}
@@ -1354,6 +1380,10 @@ PrefabInstance:
     - target: {fileID: 5853119815026528825, guid: 5195101de59b6ea45ac9ff90a69e5297, type: 3}
       propertyPath: m_Positions.Array.data[1].x
       value: -3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5853119815026528825, guid: 5195101de59b6ea45ac9ff90a69e5297, type: 3}
+      propertyPath: m_Positions.Array.data[1].y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5853119815026528825, guid: 5195101de59b6ea45ac9ff90a69e5297, type: 3}
       propertyPath: m_Positions.Array.data[1].z
