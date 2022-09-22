@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
-
+using System;
+using System.Collections;
 
 
 namespace Common
@@ -23,5 +24,16 @@ namespace Common
             return children;
         }
 
+        public static T GetChildrenComponent<T>(Transform childTransform)
+        {
+            GameObject childGO;
+            childGO = childTransform.gameObject;
+
+#pragma warning disable UNT0014 // Invalid type for call to GetComponent
+            return childGO.GetComponent<T>();
+#pragma warning restore UNT0014 // Invalid type for call to GetComponent
+        }
+
     }
+
 }

@@ -68,16 +68,23 @@ public class Atest : MonoBehaviour
         foreach (Transform setTrans in lineChildren)
         {
 
-            LineGO = setTrans.gameObject;
+            //LineGO = setTrans.gameObject;
 
-            LineArray = LineGO.GetComponent<Line>();
+            //LineArray = LineGO.GetComponent<Line>();
 
-            NodeGO = LineArray.getAPosition.gameObject;
-            NodeArray = NodeGO.GetComponent<Node>();
-            
-            
-            //Debug.Log(NodeArray.getNodeUID);
-            
+            //NodeGO = LineArray.getAPosition.gameObject;
+            //NodeArray = NodeGO.GetComponent<Node>();
+
+
+            //ComFunctions.GetChildrenComponent(setTrans, out LineArray);
+
+            LineArray = ComFunctions.GetChildrenComponent<Line>(setTrans);
+
+            NodeArray = ComFunctions.GetChildrenComponent<Node>(LineArray.getAPosition);
+
+            Debug.Log(LineArray);
+            Debug.Log(NodeArray);
+
         };
 
 
