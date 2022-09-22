@@ -9,22 +9,29 @@ public class Mover : MonoBehaviour
     [SerializeField]
     private int MoveID;
 
-    private int TargetID = 2;
+    private int TargetID;
 
-    [SerializeField]
-    private Transform startNodePoint;
-    [SerializeField]
+    //[SerializeField]
+    //private Transform startNodePoint;
+    //[SerializeField]
     private Transform[] nodePoints;
 
     // Ezoe edit
     [SerializeField]
     private GameObject lineMaster;
 
+    // SakoSako edit
+    [SerializeField]
+    private GameObject nodeMaster;
+
+
     private Transform[] lineChildren;
+    private Transform[] nodeChildren;
+    private GameObject moverNodeGO;
+    private Node moverNodeArray;
+    private int point;
     private int[] routeReturn;
     //
-
-
 
     private Vector3[] nodeVector;
     private Vector3 startNodeVector;
@@ -39,15 +46,15 @@ public class Mover : MonoBehaviour
 
     private void Awake()
     {
-        startNodeVector = startNodePoint.position;
-        startNodeVector.y = 0.25f;
-        transform.position = startNodeVector;
-        //  SearchTarget search = new SearchTarget(nodePoints.Length);
-
+        
+        
         // Ezoe Edit
         lineChildren = ComFunctions.GetChildren(lineMaster.transform);
         //
 
+        // SakoSako Edit
+        nodeChildren = ComFunctions.GetChildren(nodeMaster.transform);
+        //
 
     }
 
@@ -55,6 +62,38 @@ public class Mover : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        List<Transform> nodeTrans = new List<Transform>();
+
+        //Ezoe
+        CalcDikstra(0,11);
+        //Ezoe
+   
+
+        //Sako 
+        for (int t = 0; t < routeReturn.Length; t++)
+        {
+            foreach (Transform setNode in nodeChildren)
+            {
+                moverNodeGO = setNode.gameObject;
+                moverNodeArray = moverNodeGO.GetComponent<Node>();
+                point = moverNodeArray.getNodeUID;
+
+                if (point == routeReturn[t])
+                {                  
+                    nodeTrans.Add(setNode);
+                }
+            }
+            nodePoints = nodeTrans.ToArray();
+        }
+        //
+
+        Debug.Log(nodePoints[0]);
+
+        startNodeVector = nodePoints[0].position;
+        startNodeVector.y = 0.25f;
+        transform.position = startNodeVector;
+
         nodeVector = new Vector3[nodePoints.Length];
 
         for (int i = 0; i < nodeVector.Length; i++)
@@ -62,11 +101,9 @@ public class Mover : MonoBehaviour
             nodeVector[i] = nodePoints[i].position;
             nodeVector[i].y = 0.25f;
         }
-        nodeCounter = 0;
 
-        //Ezoe
-        CalcDikstra(2, 5);
-        //Ezoe
+        //Startを走らせるためだけのカウンター、temp
+        nodeCounter = 0;
     }
 
     // Update is called once per frame
@@ -88,10 +125,9 @@ public class Mover : MonoBehaviour
      
         if (nodeCounter != nodePoints.Length)
         {
-         
+
             transform.position = Vector3.MoveTowards(transform.position, nodeVector[nodeCounter], 1.5f * Time.deltaTime);
 
-   
             if (transform.position.x == nodePoints[nodeCounter].position.x && transform.position.z == nodePoints[nodeCounter].position.z)
             {
                 transform.position = Vector3.MoveTowards(transform.position, nodeVector[nodeCounter], 1.5f * Time.deltaTime);
@@ -155,7 +191,6 @@ public class Mover : MonoBehaviour
         {
             Debug.Log(r);
         }
-
 
         routeReturn = graph.RouteReturn;
 
