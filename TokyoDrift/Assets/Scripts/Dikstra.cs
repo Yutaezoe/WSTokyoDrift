@@ -17,6 +17,12 @@ public class Dikstra
         for (int i = 0; i < n; i++) _graph[i] = new List<Edge>();
     }
 
+    private long[] costReturn;
+    public long[] Cost { get { return costReturn; } }
+
+    private int[] routeReturn;
+    public int[] RouteReturn { get { return routeReturn; } }
+
     /// <summary>
     /// 辺を追加
     /// </summary>
@@ -30,8 +36,15 @@ public class Dikstra
     /// 最短経路のコストを取得
     /// </summary>
     /// <param name="start">開始頂点</param>
-    public long[] GetMinCost(int start)
+    public long[] GetMinCost(int start, int goal ,int fromIndex)
     {
+        // Ezoe
+        int[] from = new int[fromIndex];
+
+        List<int> intermediate_from = new List<int>();
+
+        //
+
         // コストをスタート頂点以外を無限大に
         var cost = new long[N];
         for (int i = 0; i < N; i++) cost[i] = 1000000000000000000;
@@ -56,10 +69,30 @@ public class Dikstra
                     // 既に記録されているコストより小さければコストを更新
                     cost[e.to] = v.cost + e.cost;
                     q.Push(new Vertex(e.to, cost[e.to]));
+                    
+                    // Ezoe
+                    from[e.to] = v.index; 
+                    //
                 }
             }
         }
 
+        // Ezoe
+        int t = goal;
+        
+        intermediate_from.Add(goal);
+        while (t != start)
+        {
+            t = from[t];
+            intermediate_from.Add(t);
+            
+        }
+        //
+
+        costReturn = cost;
+        intermediate_from.Reverse();
+        //int[] arrayInts = intermediate_from.ToArray();
+        routeReturn = intermediate_from.ToArray();
         // 確定したコストを返す
         return cost;
     }
