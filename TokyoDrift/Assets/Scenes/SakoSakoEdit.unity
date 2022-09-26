@@ -1161,6 +1161,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2027145179}
     m_Modifications:
+    - target: {fileID: -5408377036742581114, guid: 04325c914d0f2474c8e154bf1f0a8542, type: 3}
+      propertyPath: goalPoint
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5408377036742581114, guid: 04325c914d0f2474c8e154bf1f0a8542, type: 3}
+      propertyPath: pickPoint
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 165022333283238678, guid: 04325c914d0f2474c8e154bf1f0a8542, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -1642,6 +1650,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2027145179}
     m_Modifications:
+    - target: {fileID: -5408377036742581114, guid: 04325c914d0f2474c8e154bf1f0a8542, type: 3}
+      propertyPath: goalPoint
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5408377036742581114, guid: 04325c914d0f2474c8e154bf1f0a8542, type: 3}
+      propertyPath: pickPoint
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 165022333283238678, guid: 04325c914d0f2474c8e154bf1f0a8542, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -3586,7 +3602,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointA: {fileID: 15489543}
   pointB: {fileID: 15489535}
-  lineWeight: 1
+  lineWeight: 10
 --- !u!114 &1996578137
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -56,7 +56,6 @@ public class Mover : MonoBehaviour
     private Vector3 startNodeVector;
     private object nodeVetor;
     private int nodeCounter = 0 ;
-    private int count=0;
 
     private int[] lineFromNodeUID;
     private int[] lineToNodeUID;
@@ -65,13 +64,9 @@ public class Mover : MonoBehaviour
     private Vector3[] lineToNodeVector;
     private int[] targetNearNodeId;
 
-
-
-
     //Setting Property
     public int PropertyMoveID => MoveID;
     public int[] PropertyTargetID { get { return TargetID; } set { this.TargetID = value; } }
-
 
     private void Awake()
     { 
@@ -90,10 +85,9 @@ public class Mover : MonoBehaviour
     void Start()
     {
         /////マネージャーへの受け渡し用配列定義
-        Manager manager = new Manager();
+        Manager manager = new();
         List<int> targetIDList = new List<int>();
         List<int> minDistance = new List<int>();
-
         /////
 
         startUID = startNodePoint.GetComponent<Node>();
@@ -126,7 +120,6 @@ public class Mover : MonoBehaviour
         RouteSetting();
     }
         
-
     // Update is called once per frame
     void Update()
     {
@@ -224,7 +217,6 @@ public class Mover : MonoBehaviour
         targetNearNodeId = targetNearNodeList.ToArray();
     }
 
-
     private void MoveMobility()
     {
 
@@ -261,12 +253,10 @@ public class Mover : MonoBehaviour
             lineArray = lineGO.GetComponent<Line>();
             lineWeight = lineArray.getLineWeight;
 
-
             nodeGO = lineArray.getAPosition.gameObject;
             nodeArray = nodeGO.GetComponent<Node>();
             pointA = nodeArray.getNodeUID;
             Nodename.Add(nodeGO.name);
-
 
             nodeGO = lineArray.getBPosition.gameObject;
             nodeArray = nodeGO.GetComponent<Node>();
@@ -317,9 +307,6 @@ public class Mover : MonoBehaviour
             }
             nodePoints = nodeTrans.ToArray();
         }
-        //
-
-        //Debug.Log(nodePoints[0]);
 
         startNodeVector = nodePoints[0].position;
         startNodeVector.y = 0.25f;
@@ -333,6 +320,5 @@ public class Mover : MonoBehaviour
             nodeVector[i].y = 0.25f;
         }
     }
-
 
 }
