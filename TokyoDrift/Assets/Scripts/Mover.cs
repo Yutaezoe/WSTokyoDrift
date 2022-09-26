@@ -6,13 +6,23 @@ using System.Linq;
 
 public class Mover : MonoBehaviour
 {
+
     [SerializeField]
     private int MoveID;
 
     private int TargetID;
 
-    //[SerializeField]
-    //private Transform startNodePoint;
+    // Initial Position
+    [SerializeField]
+    private GameObject startNodePoint;
+    private Node startUID;
+
+    // Target Lists
+    [SerializeField]
+    private Transform targetMaster;
+
+
+
     //[SerializeField]
     private Transform[] nodePoints;
 
@@ -27,6 +37,13 @@ public class Mover : MonoBehaviour
 
     private Transform[] lineChildren;
     private Transform[] nodeChildren;
+    private Transform[] targetChildren;
+
+    // Target
+    private Target targetComponent;
+    private Vector3[] targetVector3;
+
+
     private GameObject moverNodeGO;
     private Node moverNodeArray;
     private int point;
@@ -38,6 +55,16 @@ public class Mover : MonoBehaviour
     private object nodeVetor;
     private int nodeCounter;
     private int count=0;
+
+    private int[] lineFromNodeUID;
+    private int[] lineToNodeUID;
+    private int[] lineComponetWeight;
+    private Vector3[] lineFromNodeVector;
+    private Vector3[] lineToNodeVector;
+    private int[] targetNearNodeId;
+
+
+
 
     //Setting Property
     public int PropertyMoveID => MoveID;
@@ -56,6 +83,12 @@ public class Mover : MonoBehaviour
         nodeChildren = ComFunctions.GetChildren(nodeMaster.transform);
         //
 
+        targetChildren = ComFunctions.GetChildren(targetMaster.transform);
+
+        
+
+
+
     }
 
 
@@ -64,11 +97,16 @@ public class Mover : MonoBehaviour
     {
 
         List<Transform> nodeTrans = new List<Transform>();
+        
 
+        startUID = startNodePoint.GetComponent<Node>();
+        //Debug.Log(startUID.getNodeUID);
         //Ezoe
-        CalcDikstra(0,11);
+        CalcDikstra(startUID.getNodeUID, 5);
         //Ezoe
-   
+
+
+        SettingComponent();
 
         //Sako 
         for (int t = 0; t < routeReturn.Length; t++)
@@ -88,7 +126,7 @@ public class Mover : MonoBehaviour
         }
         //
 
-        Debug.Log(nodePoints[0]);
+        //Debug.Log(nodePoints[0]);
 
         startNodeVector = nodePoints[0].position;
         startNodeVector.y = 0.25f;
@@ -112,13 +150,99 @@ public class Mover : MonoBehaviour
     
         MoveMobility();
 
-        count += 1;
-        if (count > 1000)
-        {
-            TargetID += 1;
-            count = 0;
-        }
     }
+
+    private void SettingComponent()
+    {
+        Line lineComponent;
+        Node nodeComponent;
+
+        List<int> lineFromNodeUIDList = new();
+        List<int> lineToNodeUIDList = new();
+        List<int> weightList = new();
+        
+
+        List<Vector3> lineFromNodeVectorList = new();
+        List<Vector3> lineToNodeVectorList = new();
+        List<Vector3> TargetVector3 = new List<Vector3>();
+
+        // LineよりUID 重さ 接続位置の取得を行う
+        foreach (Transform setLineChild in lineChildren)
+        {
+            lineComponent = ComFunctions.GetChildrenComponent<Line>(setLineChild);
+
+            nodeComponent = ComFunctions.GetChildrenComponent<Node>(lineComponent.getAPosition);
+            lineFromNodeUIDList.Add(nodeComponent.getNodeUID);
+            lineFromNodeVectorList.Add(lineComponent.getAPosition.position);
+            nodeComponent = ComFunctions.GetChildrenComponent<Node>(lineComponent.getBPosition);
+            lineToNodeUIDList.Add(nodeComponent.getNodeUID);
+            lineToNodeVectorList.Add(lineComponent.getBPosition.position);
+
+            weightList.Add(lineComponent.getLineWeight);
+        }
+        lineFromNodeUID = lineFromNodeUIDList.ToArray();
+        lineToNodeUID = lineToNodeUIDList.ToArray();
+        lineComponetWeight = weightList.ToArray();
+        lineFromNodeVector = lineFromNodeVectorList.ToArray();
+        lineToNodeVector = lineToNodeVectorList.ToArray();
+
+        // Targetの位置の取得を行う
+        foreach (Transform setTarget in targetChildren)
+        {
+            targetComponent = ComFunctions.GetChildrenComponent<Target>(setTarget);
+            TargetVector3.Add(targetComponent.NearNodeVector3);
+        }
+        targetVector3 = TargetVector3.ToArray();
+
+        // Get Target near node
+        List<int> targetNearNodeList = new();
+        int tempNearNode;
+        int cnt;
+        float minDistanceVector;
+        float dist;
+
+
+
+        foreach (Vector3 setTargetVector3 in targetVector3)
+        {
+            tempNearNode = 0;
+            cnt = 0;
+            minDistanceVector = float.MaxValue;
+            foreach (Vector3 setFromNodeVector in lineFromNodeVector)
+            {
+                dist = Vector3.Distance(setFromNodeVector, setTargetVector3);
+                
+                if (minDistanceVector > dist)
+                {
+                    minDistanceVector = dist;
+                    tempNearNode = lineFromNodeUID[cnt];
+                }
+                cnt++;
+            }
+            cnt = 0;
+
+            foreach (Vector3 setToNodeVector in lineToNodeVector)
+            {
+                dist = Vector3.Distance(setToNodeVector, setTargetVector3);
+                
+                if (minDistanceVector > dist)
+                {
+                    minDistanceVector = dist;
+                    tempNearNode = lineToNodeUID[cnt];
+                }
+                cnt++;
+            }
+
+            targetNearNodeList.Add(tempNearNode);
+            Debug.Log(tempNearNode);
+        }
+
+        targetNearNodeId = targetNearNodeList.ToArray();
+
+
+
+    }
+
 
     private void MoveMobility()
     {
@@ -130,7 +254,7 @@ public class Mover : MonoBehaviour
 
             if (transform.position.x == nodePoints[nodeCounter].position.x && transform.position.z == nodePoints[nodeCounter].position.z)
             {
-                transform.position = Vector3.MoveTowards(transform.position, nodeVector[nodeCounter], 1.5f * Time.deltaTime);
+                //transform.position = Vector3.MoveTowards(transform.position, nodeVector[nodeCounter], 1.5f * Time.deltaTime);
                 nodeCounter++;
             }
         }
@@ -189,7 +313,7 @@ public class Mover : MonoBehaviour
         }
         foreach (int r in graph.RouteReturn)
         {
-            Debug.Log(r);
+            //Debug.Log(r);
         }
 
         routeReturn = graph.RouteReturn;

@@ -82,8 +82,8 @@ public class Atest : MonoBehaviour
 
             NodeArray = ComFunctions.GetChildrenComponent<Node>(LineArray.getAPosition);
 
-            Debug.Log(LineArray);
-            Debug.Log(NodeArray);
+            //Debug.Log(LineArray);
+            //Debug.Log(NodeArray);
 
         };
 
