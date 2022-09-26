@@ -3602,7 +3602,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointA: {fileID: 15489543}
   pointB: {fileID: 15489535}
-  lineWeight: 10
+  lineWeight: 1
 --- !u!114 &1996578137
 MonoBehaviour:
   m_ObjectHideFlags: 0

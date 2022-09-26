@@ -8,9 +8,9 @@ public class Mover : MonoBehaviour
 {
 
     [SerializeField]
-    private int MoveID;
+    private int _MoveID;
 
-    private int[] TargetID;
+    private int[] _TargetID;
 
     // Initial Position
     [SerializeField]
@@ -21,10 +21,8 @@ public class Mover : MonoBehaviour
     [SerializeField]
     private Transform targetMaster;
 
-
-
     //[SerializeField]
-    private Transform[] nodePoints;
+    private Vector3[] nodePoints;
 
     // Ezoe edit
     [SerializeField]
@@ -46,6 +44,7 @@ public class Mover : MonoBehaviour
 
     private GameObject moverNodeGO;
     private Node moverNodeArray;
+    private int _endPoint;
     private int point;
     private int[] routeReturn;
     private long[] costReturn;
@@ -65,31 +64,23 @@ public class Mover : MonoBehaviour
     private int[] targetNearNodeId;
 
     //Setting Property
-    public int PropertyMoveID => MoveID;
-    public int[] PropertyTargetID { get { return TargetID; } set { this.TargetID = value; } }
+    public int PropertyMoveID => _MoveID;
+    public int PropertyTargettingPoint => _endPoint;
+    public int[] PropertyTargetID { get { return _TargetID; } set { this._TargetID = value; } }
 
     private void Awake()
     { 
         // Ezoe Edit
         lineChildren = ComFunctions.GetChildren(lineMaster.transform);
-        //
-        // SakoSako Edit
         nodeChildren = ComFunctions.GetChildren(nodeMaster.transform);
-        //
         targetChildren = ComFunctions.GetChildren(targetMaster.transform);
         //
     }
 
-
     // Start is called before the first frame update
     void Start()
     {
-        /////マネージャーへの受け渡し用配列定義
         Manager manager = new();
-        List<int> targetIDList = new List<int>();
-        List<int> minDistance = new List<int>();
-        /////
-
         startUID = startNodePoint.GetComponent<Node>();
         Debug.Log(startUID.getNodeUID);
         //Ezoe
@@ -97,24 +88,9 @@ public class Mover : MonoBehaviour
         //Ezoe
         SettingComponent();
 
-        /////////マネージャーへの受け渡し用配列作成
-        for (int setTarget = 0; setTarget < targetNearNodeId.Length; setTarget++)
-        {
-            targetIDList.Add(targetNearNodeId[setTarget]);
-            minDistance.Add((int)costReturn[targetNearNodeId[setTarget]]);
-        }
-
-        TargetID = targetIDList.ToArray();
-        eachTargetDistance = minDistance.ToArray();
-
-        for (int t = 0; t < targetNearNodeId.Length; t++)
-        {
-            Debug.Log($"TargetID:{TargetID[t]} ,Cost:{eachTargetDistance[t]} ");
-        }
-        /////////
-
         //マネージャーに各ターゲットへのデータ渡し
-        manager.distancePassive(MoveID,TargetID,eachTargetDistance);
+        SettingEachTargetDistance();
+        manager.distancePassive(_MoveID, _TargetID,eachTargetDistance);
 
         //Sako 
         RouteSetting();
@@ -129,6 +105,7 @@ public class Mover : MonoBehaviour
         }
     }
 
+    //Ezoe
     private void SettingComponent()
     {
         Line lineComponent;
@@ -217,6 +194,7 @@ public class Mover : MonoBehaviour
         targetNearNodeId = targetNearNodeList.ToArray();
     }
 
+    //Sako
     private void MoveMobility()
     {
 
@@ -290,35 +268,68 @@ public class Mover : MonoBehaviour
     //Sako
     private void RouteSetting()
     {
-        List<Transform> nodeTrans = new List<Transform>();
+        List<Vector3> nodeTrans = new ();
 
         for (int t = 0; t < routeReturn.Length; t++)
         {
-            foreach (Transform setNode in nodeChildren)
-            {
-                moverNodeGO = setNode.gameObject;
-                moverNodeArray = moverNodeGO.GetComponent<Node>();
-                point = moverNodeArray.getNodeUID;
+            Debug.Log("route" + routeReturn[t]);
 
-                if (point == routeReturn[t])
+            foreach (int setNode in lineToNodeUID)
+            {
+                if (lineFromNodeUID[setNode] == routeReturn[t])
                 {
-                    nodeTrans.Add(setNode);
+                    nodeTrans.Add(lineFromNodeVector[setNode]);
+                } 
+                else if (lineToNodeUID[setNode] == routeReturn[t])
+                {
+                    nodeTrans.Add(lineToNodeVector[setNode]);
                 }
             }
             nodePoints = nodeTrans.ToArray();
         }
 
-        startNodeVector = nodePoints[0].position;
+        startNodeVector = nodePoints[0];
         startNodeVector.y = 0.25f;
         transform.position = startNodeVector;
 
         nodeVector = new Vector3[nodePoints.Length];
 
+        //不要では？
         for (int i = 0; i < nodeVector.Length; i++)
         {
-            nodeVector[i] = nodePoints[i].position;
+            nodeVector[i] = nodePoints[i];
             nodeVector[i].y = 0.25f;
         }
+    }
+
+    //Sako
+    private void SettingEachTargetDistance()
+    {
+        /////マネージャーへの受け渡し用配列定義
+        List<int> targetIDList = new List<int>();
+        List<int> minDistance = new List<int>();
+        /////
+        /////////マネージャーへの受け渡し用配列作成
+        for (int setTarget = 0; setTarget < targetNearNodeId.Length; setTarget++)
+        {
+            targetIDList.Add(targetNearNodeId[setTarget]);
+            minDistance.Add((int)costReturn[targetNearNodeId[setTarget]]);
+        }
+
+        _TargetID = targetIDList.ToArray();
+        eachTargetDistance = minDistance.ToArray();
+
+        //for (int t = 0; t < targetNearNodeId.Length; t++)
+        //{
+        //    Debug.Log($"TargetID:{TargetID[t]} ,Cost:{eachTargetDistance[t]} ");
+        //}
+        /////////
+    }
+
+    //Sako
+    private void DecesionTarget()
+    {
+
     }
 
 }
