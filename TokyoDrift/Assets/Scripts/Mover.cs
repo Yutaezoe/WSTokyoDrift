@@ -15,7 +15,11 @@ public class Mover : MonoBehaviour
     // Initial Position
     [SerializeField]
     private GameObject startNodePoint;
-    private Node startUID;
+    private int startUID;
+
+    // Goal Position
+    private int _nextUID;
+    private int goalUID;
 
     // Target Lists
     [SerializeField]
@@ -44,7 +48,6 @@ public class Mover : MonoBehaviour
 
     private GameObject moverNodeGO;
     private Node moverNodeArray;
-    private int _endPoint;
     private int point;
     private int[] routeReturn;
     private long[] costReturn;
@@ -65,7 +68,7 @@ public class Mover : MonoBehaviour
 
     //Setting Property
     public int PropertyMoveID => _MoveID;
-    public int PropertyTargettingPoint => _endPoint;
+    public int PropertyTargettingPoint => _nextUID;
     public int[] PropertyTargetID { get { return _TargetID; } set { this._TargetID = value; } }
 
     private void Awake()
@@ -73,24 +76,34 @@ public class Mover : MonoBehaviour
         // Ezoe Edit
         lineChildren = ComFunctions.GetChildren(lineMaster.transform);
         nodeChildren = ComFunctions.GetChildren(nodeMaster.transform);
-        targetChildren = ComFunctions.GetChildren(targetMaster.transform);
+        //targetChildren = ComFunctions.GetChildren(targetMaster.transform);
         //
+
+        
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        Manager manager = new();
-        startUID = startNodePoint.GetComponent<Node>();
-        Debug.Log(startUID.getNodeUID);
         //Ezoe
-        CalcDikstra(startUID.getNodeUID, 11);
-        //Ezoe
+        //Fieldの状態を把握
         SettingComponent();
 
+        //Sako
+        //スタート地点とゴール地点を定義
+        SettingStartAndGoal();
+
+        //Ezoe
+        //マネージャーへ送る用のダイクストラ計算
+        CalcDikstra(startUID, _nextUID);
+
+        //Sako
         //マネージャーに各ターゲットへのデータ渡し
+        Manager manager = new();
         SettingEachTargetDistance();
         manager.distancePassive(_MoveID, _TargetID,eachTargetDistance);
+
+        DecesionTarget();
 
         //Sako 
         RouteSetting();
@@ -99,15 +112,28 @@ public class Mover : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (nodeCounter != nodePoints.Length)
-        {
+       
+            //常時、残ターゲットを確認
+       SettingComponent();
+
+       if (nodeCounter != nodePoints.Length)
+       {
             MoveMobility();
-        }
+       }
+       else
+       {
+            nodeCounter = 0;
+            startUID = _nextUID;
+            DecesionTarget();
+            RouteSetting();
+       }
     }
 
     //Ezoe
     private void SettingComponent()
     {
+        targetChildren = ComFunctions.GetChildren(targetMaster.transform);
+
         Line lineComponent;
         Node nodeComponent;
 
@@ -188,10 +214,28 @@ public class Mover : MonoBehaviour
             }
 
             targetNearNodeList.Add(tempNearNode);
-            Debug.Log(tempNearNode);
+            //Debug.Log(tempNearNode);
         }
 
         targetNearNodeId = targetNearNodeList.ToArray();
+    }
+
+    //Sako
+    private void SettingStartAndGoal()
+    {
+        startUID = startNodePoint.GetComponent<Node>().getNodeUID;
+
+        foreach (Transform goalTarget in targetChildren)
+        {
+            Target goalCheck;
+            goalCheck = ComFunctions.GetChildrenComponent<Target>(goalTarget);
+
+            if (goalCheck.GoalPoint)
+            {
+                goalUID = targetNearNodeId[goalCheck.TargetUid];
+                _nextUID = goalUID;
+            }
+        }
     }
 
     //Sako
@@ -272,8 +316,6 @@ public class Mover : MonoBehaviour
 
         for (int t = 0; t < routeReturn.Length; t++)
         {
-            Debug.Log("route" + routeReturn[t]);
-
             foreach (int setNode in lineToNodeUID)
             {
                 if (lineFromNodeUID[setNode] == routeReturn[t])
@@ -330,6 +372,29 @@ public class Mover : MonoBehaviour
     private void DecesionTarget()
     {
 
+        //ダイクストラのプリ計算
+        CalcDikstra(startUID, _nextUID);
+
+        //ターゲットの中から最短経路のものを抽出
+        long costRetrunTemp = 100000;
+        foreach(int tar in targetNearNodeId)
+        {
+            //残ターゲットが2個以上でgoalUIDは候補から除外
+            if ( tar == goalUID && targetChildren.Length != 1 )
+            {
+                continue;
+            }
+            
+            //最もコストの低いTargetを抽出
+            if(costReturn[tar] < costRetrunTemp)
+            {
+                _nextUID = tar;
+            }
+            costRetrunTemp = costReturn[tar];
+        }
+
+        //次のターゲットターゲットまでの最短経路取得
+        CalcDikstra(startUID, _nextUID);
     }
 
 }
