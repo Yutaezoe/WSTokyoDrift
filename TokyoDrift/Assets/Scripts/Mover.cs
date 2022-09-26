@@ -10,7 +10,7 @@ public class Mover : MonoBehaviour
     [SerializeField]
     private int MoveID;
 
-    private int TargetID;
+    private int[] TargetID;
 
     // Initial Position
     [SerializeField]
@@ -48,13 +48,14 @@ public class Mover : MonoBehaviour
     private Node moverNodeArray;
     private int point;
     private int[] routeReturn;
+    private long[] costReturn;
+    private int[] eachTargetDistance;
     //
 
     private Vector3[] nodeVector;
     private Vector3 startNodeVector;
     private object nodeVetor;
-    private int nodeCounter;
-    private int count=0;
+    private int nodeCounter = 0 ;
 
     private int[] lineFromNodeUID;
     private int[] lineToNodeUID;
@@ -63,93 +64,69 @@ public class Mover : MonoBehaviour
     private Vector3[] lineToNodeVector;
     private int[] targetNearNodeId;
 
-
-
-
     //Setting Property
     public int PropertyMoveID => MoveID;
-    public int PropertyTargetID => TargetID;
-
+    public int[] PropertyTargetID { get { return TargetID; } set { this.TargetID = value; } }
 
     private void Awake()
-    {
-        
-        
+    { 
         // Ezoe Edit
         lineChildren = ComFunctions.GetChildren(lineMaster.transform);
         //
-
         // SakoSako Edit
         nodeChildren = ComFunctions.GetChildren(nodeMaster.transform);
         //
-
         targetChildren = ComFunctions.GetChildren(targetMaster.transform);
-
-        
-
-
-
+        //
     }
 
 
     // Start is called before the first frame update
     void Start()
     {
-
-        List<Transform> nodeTrans = new List<Transform>();
-        
+        /////マネージャーへの受け渡し用配列定義
+        Manager manager = new();
+        List<int> targetIDList = new List<int>();
+        List<int> minDistance = new List<int>();
+        /////
 
         startUID = startNodePoint.GetComponent<Node>();
-        //Debug.Log(startUID.getNodeUID);
+        Debug.Log(startUID.getNodeUID);
         //Ezoe
-        CalcDikstra(startUID.getNodeUID, 5);
+        CalcDikstra(startUID.getNodeUID, 11);
         //Ezoe
-
-
         SettingComponent();
 
+        /////////マネージャーへの受け渡し用配列作成
+        for (int setTarget = 0; setTarget < targetNearNodeId.Length; setTarget++)
+        {
+            targetIDList.Add(targetNearNodeId[setTarget]);
+            minDistance.Add((int)costReturn[targetNearNodeId[setTarget]]);
+        }
+
+        TargetID = targetIDList.ToArray();
+        eachTargetDistance = minDistance.ToArray();
+
+        for (int t = 0; t < targetNearNodeId.Length; t++)
+        {
+            Debug.Log($"TargetID:{TargetID[t]} ,Cost:{eachTargetDistance[t]} ");
+        }
+        /////////
+
+        //マネージャーに各ターゲットへのデータ渡し
+        manager.distancePassive(MoveID,TargetID,eachTargetDistance);
+
         //Sako 
-        for (int t = 0; t < routeReturn.Length; t++)
-        {
-            foreach (Transform setNode in nodeChildren)
-            {
-                moverNodeGO = setNode.gameObject;
-                moverNodeArray = moverNodeGO.GetComponent<Node>();
-                point = moverNodeArray.getNodeUID;
-
-                if (point == routeReturn[t])
-                {                  
-                    nodeTrans.Add(setNode);
-                }
-            }
-            nodePoints = nodeTrans.ToArray();
-        }
-        //
-
-        //Debug.Log(nodePoints[0]);
-
-        startNodeVector = nodePoints[0].position;
-        startNodeVector.y = 0.25f;
-        transform.position = startNodeVector;
-
-        nodeVector = new Vector3[nodePoints.Length];
-
-        for (int i = 0; i < nodeVector.Length; i++)
-        {
-            nodeVector[i] = nodePoints[i].position;
-            nodeVector[i].y = 0.25f;
-        }
-
-        //Startを走らせるためだけのカウンター、temp
-        nodeCounter = 0;
+        RouteSetting();
     }
-
+        
     // Update is called once per frame
     void Update()
     {
-    
-        MoveMobility();
-
+        if (nodeCounter != nodePoints.Length)
+        {
+            MoveMobility();
+        }
     }
 
     private void SettingComponent()
@@ -238,26 +215,17 @@ public class Mover : MonoBehaviour
         }
 
         targetNearNodeId = targetNearNodeList.ToArray();
-
-
-
     }
-
 
     private void MoveMobility()
     {
-     
-        if (nodeCounter != nodePoints.Length)
-        {
 
             transform.position = Vector3.MoveTowards(transform.position, nodeVector[nodeCounter], 1.5f * Time.deltaTime);
 
-            if (transform.position.x == nodePoints[nodeCounter].position.x && transform.position.z == nodePoints[nodeCounter].position.z)
+            if (transform.position.x == nodeVector[nodeCounter].x && transform.position.z == nodeVector[nodeCounter].z)
             {
-                //transform.position = Vector3.MoveTowards(transform.position, nodeVector[nodeCounter], 1.5f * Time.deltaTime);
                 nodeCounter++;
             }
-        }
     }
 
     //Ezoe
@@ -285,12 +253,10 @@ public class Mover : MonoBehaviour
             lineArray = lineGO.GetComponent<Line>();
             lineWeight = lineArray.getLineWeight;
 
-
             nodeGO = lineArray.getAPosition.gameObject;
             nodeArray = nodeGO.GetComponent<Node>();
             pointA = nodeArray.getNodeUID;
             Nodename.Add(nodeGO.name);
-
 
             nodeGO = lineArray.getBPosition.gameObject;
             nodeArray = nodeGO.GetComponent<Node>();
@@ -316,9 +282,43 @@ public class Mover : MonoBehaviour
             //Debug.Log(r);
         }
 
+        costReturn = graph.Cost;
         routeReturn = graph.RouteReturn;
 
     }
 
+    //Sako
+    private void RouteSetting()
+    {
+        List<Transform> nodeTrans = new List<Transform>();
+
+        for (int t = 0; t < routeReturn.Length; t++)
+        {
+            foreach (Transform setNode in nodeChildren)
+            {
+                moverNodeGO = setNode.gameObject;
+                moverNodeArray = moverNodeGO.GetComponent<Node>();
+                point = moverNodeArray.getNodeUID;
+
+                if (point == routeReturn[t])
+                {
+                    nodeTrans.Add(setNode);
+                }
+            }
+            nodePoints = nodeTrans.ToArray();
+        }
+
+        startNodeVector = nodePoints[0].position;
+        startNodeVector.y = 0.25f;
+        transform.position = startNodeVector;
+
+        nodeVector = new Vector3[nodePoints.Length];
+
+        for (int i = 0; i < nodeVector.Length; i++)
+        {
+            nodeVector[i] = nodePoints[i].position;
+            nodeVector[i].y = 0.25f;
+        }
+    }
 
 }
