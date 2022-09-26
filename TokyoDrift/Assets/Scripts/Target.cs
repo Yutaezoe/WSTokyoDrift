@@ -54,35 +54,28 @@ public class Target : MonoBehaviour
     private void Awake()
     {
         _nearNodeVector3 = transform.position;
+
+        if (goalPoint)
+        {
+            gameObject.GetComponent<Renderer>().material.color = Color.red;
+        }
+
     }
 
     // collision detection
     void OnTriggerEnter(Collider collider)
     {
-        
-        //try
-        //{
-            
-        //    if (nearNodeComponent==null)
-        //    {
 
-        //        nearNodeComponent = collider.gameObject.GetComponent<Node>();
-        //        Debug.Log("collidername :" + nearNodeComponent);
-        //    }
-        //    _nearNodeUID = nearNodeComponent.getNodeUID;
-        //}
-        //catch
-        //{
-        //    // 
-        //}
-        
-
+       
         // Regular expressions
         bool result = Regex.IsMatch(collider.gameObject.name, "Bus*");
         if (result)
         {
-            //Debug.Log(collider.gameObject.name);
-            Destroy(gameObject);
+            if (goalPoint == false)
+            {
+                Destroy(gameObject);
+            }
+            
         }
         
     }
