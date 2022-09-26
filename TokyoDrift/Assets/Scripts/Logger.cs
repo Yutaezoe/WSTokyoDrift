@@ -48,7 +48,7 @@ public class Logger : MonoBehaviour
             {
                 var moverComponent = mover[i].GetComponent<Mover>();
                 mover1MoverID.Add(moverComponent.PropertyMoveID);
-                mover1TargetID.Add(moverComponent.PropertyTargetID);
+                //mover1TargetID.Add(moverComponent.PropertyTargetID);
                 mover1Time.Add(DateTime.Now);
                 Debug.Log("MoverID:" + mover1MoverID[count]);
                 Debug.Log("TargetID:" + mover1TargetID[count]);
