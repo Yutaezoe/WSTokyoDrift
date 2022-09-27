@@ -7,9 +7,13 @@ using System.Linq;
 public class Mover : MonoBehaviour
 {
 
+    #region Mover's Field
+    //Managerクラスの呼び出し用
+    [SerializeField]
+    GameObject manager;
+
     [SerializeField]
     private int _MoveID;
-
     private int[] _TargetID;
 
     // Initial Position
@@ -27,6 +31,8 @@ public class Mover : MonoBehaviour
 
     //Move
     private Vector3[] nodePoints;
+    [SerializeField]
+    private float baseSpeed = 2;
     private int modifiedVelocity;
 
     // Ezoe edit
@@ -37,7 +43,6 @@ public class Mover : MonoBehaviour
     [SerializeField]
     private GameObject nodeMaster;
 
-
     private Transform[] lineChildren;
     private Transform[] nodeChildren;
     private Transform[] targetChildren;
@@ -45,7 +50,8 @@ public class Mover : MonoBehaviour
     // Target
     private Target targetComponent;
     private Vector3[] targetVector3;
-
+    private bool IsAsignWait;
+    ///private bool[] 
 
     private GameObject moverNodeGO;
     private Node moverNodeArray;
@@ -66,18 +72,20 @@ public class Mover : MonoBehaviour
     private Vector3[] lineFromNodeVector;
     private Vector3[] lineToNodeVector;
     private int[] targetNearNodeId;
+    private bool IsCalledDistance = false;
+    #endregion
 
-    //Setting Property
-    public int PropertyMoveID => _MoveID;
-    public int PropertyTargettingPoint => _nextUID;
+    #region Setting Property
+    public int PropertyMoveID { get { return _MoveID; } }
+    public int PropertyTargettingPoint { get { return _nextUID; }}
     public int[] PropertyTargetID { get { return _TargetID; } set { this._TargetID = value; } }
+    #endregion
 
     private void Awake()
     { 
         // Ezoe Edit
         lineChildren = ComFunctions.GetChildren(lineMaster.transform);
         nodeChildren = ComFunctions.GetChildren(nodeMaster.transform);
-        //targetChildren = ComFunctions.GetChildren(targetMaster.transform);
         //
     }
 
@@ -96,42 +104,68 @@ public class Mover : MonoBehaviour
         //マネージャーへ送る用の情報をダイクストラで計算
         CalcDikstra(startUID, _nextUID);
 
-        //Sako
-        //マネージャーに各ターゲットへのデータ渡し
-        Manager manager = new();
-        SettingEachTargetDistance();
-        manager.distancePassive(_MoveID, _TargetID,eachTargetDistance);
+       // //Sako
+       // //マネージャーに各ターゲットへのデータ渡し
+       // Manager managercompo = manager.GetComponent<Manager>();
+       // SettingEachTargetDistance();
 
-        //【一時置き】assignWaitの代替
-        DecesionTarget();
+       //// managercompo.distancePassive(_MoveID, _TargetID, eachTargetDistance);
 
-        //Sako 
-        RouteSetting();
+
+        List<bool> targetStatus = new();
+
+        foreach (Transform setTarget in targetChildren)
+        {
+            targetComponent = ComFunctions.GetChildrenComponent<Target>(setTarget);
+            targetStatus.Add(targetComponent.PickPoint);
+        }
+        //pickStatus = targetStatus.ToArray();
     }
         
     // Update is called once per frame
     void Update()
     {
-       
-       //常時、残ターゲットを確認
-       SettingComponent();
 
-       //目的地(_nextUID)にたどり着くまでMoveMobilityを繰り返す
-       //到達後、DecesionTargetにて次の目的地を設定し、上記を実施
-       if (nodeCounter != nodePoints.Length)
-       {
+        if (!IsCalledDistance)
+        {
+            //Sako
+            //マネージャーに各ターゲットへのデータ渡し
+            Manager managercompo = manager.GetComponent<Manager>();
+            SettingEachTargetDistance();
+           bool complete= managercompo.distancePassive(_MoveID, _TargetID, eachTargetDistance);
+            if (complete == true)
+            {
+                IsCalledDistance = true;
+            }
+
+        }
+        //MoverがManagerに一度もアサインされていなければ入る
+        if (!IsAsignWait)
+        {
+            //Manager側で自身がアサインされたかチェック
+            AssignWait();
+        }
+
+        //常時、残ターゲットを確認
+        SettingComponent();
+
+        //目的地(_nextUID)にたどり着くまでMoveMobilityを繰り返す
+        //到達後、DecesionTargetにて次の目的地を設定し、上記を実施
+        if (nodeCounter != nodePoints.Length)
+        {
             ModifyVelocity();
             MoveMobility();
-       }
-       else
-       {
+        }
+        else
+        {
             nodeCounter = 0;
             startUID = _nextUID;
             DecesionTarget();
             RouteSetting();
-       }
+        }
     }
 
+    #region Mover's Methods
     //Ezoe
     private void SettingComponent()
     {
@@ -244,8 +278,9 @@ public class Mover : MonoBehaviour
     //Sako
     private void MoveMobility()
     {
-
-            transform.position = Vector3.MoveTowards(transform.position, nodeVector[nodeCounter], 1.0f * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position
+                , nodeVector[nodeCounter]
+                , (baseSpeed / (float)modifiedVelocity) * Time.deltaTime);
 
             if (transform.position.x == nodeVector[nodeCounter].x && transform.position.z == nodeVector[nodeCounter].z)
             {
@@ -387,7 +422,7 @@ public class Mover : MonoBehaviour
             {
                 continue;
             }
-            
+
             //最もコストの低いTargetを抽出
             if(costReturn[tar] < costRetrunTemp)
             {
@@ -403,25 +438,45 @@ public class Mover : MonoBehaviour
     //Sako
     private void ModifyVelocity()
     {
-        int index = 0;
-        foreach (Vector3 setFrom in lineFromNodeVector)
+        for (int v = 0; v < lineComponetWeight.Length; v++)
         {
-            foreach(Vector3 setTo in lineToNodeVector)
+            if (nodeCounter == 0)
             {
-                if(nodeCounter == 0)
-                {
-                    continue;
-                }
-
-                if (setTo == nodePoints[nodeCounter - 1] && setFrom == nodePoints[nodeCounter] ||
-                    setFrom == nodePoints[nodeCounter - 1] && setTo == nodePoints[nodeCounter])
-                {
-                    modifiedVelocity = lineComponetWeight[index];
-                }
+                modifiedVelocity = 1;
+                continue;
             }
-            index++;
+
+            if ((lineFromNodeVector[v] == nodePoints[nodeCounter - 1] &&
+                lineToNodeVector[v] == nodePoints[nodeCounter])
+                || (lineToNodeVector[v] == nodePoints[nodeCounter - 1] &&
+                lineFromNodeVector[v] == nodePoints[nodeCounter]))
+            {
+                modifiedVelocity = lineComponetWeight[v];
+            }
         }
-        //Debug.Log("VelocityWeight = " + modifiedVelocity);
     }
+
+    //Sako
+    private void AssignWait()
+    {
+        bool assignTriger;
+        //Managerクラスのインスタンスの仕方要検討
+        Manager manageComponent = manager.GetComponent<Manager>();
+        assignTriger = manageComponent.PropertyAssign;
+        if (!assignTriger)
+        {
+            return;
+        }
+        else
+        {
+            _nextUID = manageComponent.GetAssignTarget(_MoveID);
+            Debug.Log($"{_MoveID} : First Target {_nextUID} ");
+            CalcDikstra(startUID, _nextUID);
+            RouteSetting();
+            IsAsignWait = true;
+        }
+    }
+
+    #endregion
 
 }

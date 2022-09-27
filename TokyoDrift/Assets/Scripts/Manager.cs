@@ -40,7 +40,7 @@ public class Manager : MonoBehaviour
     private Transform[] arrayTarget;
     private int countMover;
     private int countTarget;
-    private int countKickOfdistancePassive = 0;
+    private int countKickOfdistancePassive ;
     [SerializeField]
     private GameObject targetMaster;
     //private string pyExePath = @"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\Python\tst.exe";
@@ -52,7 +52,17 @@ public class Manager : MonoBehaviour
 
     //kito added 2
     bool assignComplete = false;
+    bool assignStatus = false;
 
+    public bool PropertyAssign
+    {
+        get { return assignStatus; }
+    }
+
+    public int GetAssignTarget(int moverID)
+    {
+        return assignTargetID[moverID];
+    }
 
     private void Start()
     {
@@ -67,18 +77,21 @@ public class Manager : MonoBehaviour
     }
     private void Update()
     {
-        for (int i = 0; i < _moverID.Count; i++) { UnityEngine.Debug.Log(+_moverID[i]); }
-        for (int i = 0; i < _targetID.Count; i++) { UnityEngine.Debug.Log(_targetID[i]); }
-        for (int i = 0; i < _distance.Count; i++) { UnityEngine.Debug.Log(_distance[i]); }
         //added by kito
         //Check if Assign Buber is kicked by ALL Mover every frame
         countDistancePassiveKick();
+        for (int i = 0; i < _moverID.Count; i++)
+        {
+            print(_moverID[i] + ":::::1111111111111111111111111111111111111111111111111111");
+        }
+
     }
     //moverクラスから各距離情報の変数を受け取ってManager上にデータを格納していく
     //moverIDの取得順に懸念あり→実装後確認
     //changed hashimoto
-    public void distancePassive(int moverID, int[] targetID, int[] distance)
+    public bool distancePassive(int moverID, int[] targetID, int[] distance)
     {
+
         //もらうtargetIDは全て同じ値想定
         for (int i = 0; i < targetID.Length; i++)
         {
@@ -88,10 +101,9 @@ public class Manager : MonoBehaviour
         }
         //added by kito
         //coutup if Mover kicks passiveDistance
+
         countKickOfdistancePassive += 1;
-
-
-
+        return true;
     }
     //added by kito
     void confirmMoverTargetCount()
@@ -103,12 +115,14 @@ public class Manager : MonoBehaviour
     }
     void countDistancePassiveKick()
     {
+
         if (countMover == countKickOfdistancePassive)
         {
             //assignMover is called once only.
             if (assignComplete == false)
             {
                 aasignMover();
+
                 assignComplete = true;
             }
         }
@@ -125,31 +139,6 @@ public class Manager : MonoBehaviour
 
         //read assing result.
         ReadCSVAssignMover();
-
-        //var testComponent = mainCamera.GetComponent<test>();
-        //var test2Component = mainCamera.GetComponent<test2>();
-        //var target1Component = target1.GetComponent<Target>();
-        //var target2Component = target2.GetComponent<Target>();
-        ////moverの数だけ繰り返す
-        //for (int i = 0; i < _moverID.Count; i++)
-        //{
-        //    switch (_moverID[i])
-        //    {
-        //        case 0:
-        //            //moverに渡す値たち
-        //            testComponent.TargetIDPropertyInt = _targetID[i];
-        //            UnityEngine.Debug.Log("これはManager側のtest1:" + testComponent.mover1targetID1propertyInt);
-        //            //情報渡したらtargetステータスをCOMPLETED
-        //            target1Component.SetStatusOfPikkingCOMPLETED();
-        //            break;
-        //        case 1:
-        //            test2Component.TargetID2PropertyInt = _targetID[i];
-        //            UnityEngine.Debug.Log("これはManager側のtest2:" + test2Component.mover2targetID1propertyInt);
-        //            target2Component.SetStatusOfPikkingCOMPLETED();
-        //            break;
-        //    }
-        //}
-
 
         //start logger
        var loggerCompo=logger.GetComponent<Logger>();
@@ -241,6 +230,8 @@ public class Manager : MonoBehaviour
             print("MoverID" + assignMoverID[i] + ":" + i);
 
         }
+
+        assignStatus = true;
     }
 
     void ChangeOrderOfArray()
@@ -272,6 +263,7 @@ public class Manager : MonoBehaviour
 
         }
     }
+
 
     //void MakeCSV()
     //{
