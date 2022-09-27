@@ -25,8 +25,9 @@ public class Mover : MonoBehaviour
     [SerializeField]
     private Transform targetMaster;
 
-    //[SerializeField]
+    //Move
     private Vector3[] nodePoints;
+    private int modifiedVelocity;
 
     // Ezoe edit
     [SerializeField]
@@ -78,8 +79,6 @@ public class Mover : MonoBehaviour
         nodeChildren = ComFunctions.GetChildren(nodeMaster.transform);
         //targetChildren = ComFunctions.GetChildren(targetMaster.transform);
         //
-
-        
     }
 
     // Start is called before the first frame update
@@ -94,7 +93,7 @@ public class Mover : MonoBehaviour
         SettingStartAndGoal();
 
         //Ezoe
-        //マネージャーへ送る用のダイクストラ計算
+        //マネージャーへ送る用の情報をダイクストラで計算
         CalcDikstra(startUID, _nextUID);
 
         //Sako
@@ -103,6 +102,7 @@ public class Mover : MonoBehaviour
         SettingEachTargetDistance();
         manager.distancePassive(_MoveID, _TargetID,eachTargetDistance);
 
+        //【一時置き】assignWaitの代替
         DecesionTarget();
 
         //Sako 
@@ -113,11 +113,14 @@ public class Mover : MonoBehaviour
     void Update()
     {
        
-            //常時、残ターゲットを確認
+       //常時、残ターゲットを確認
        SettingComponent();
 
+       //目的地(_nextUID)にたどり着くまでMoveMobilityを繰り返す
+       //到達後、DecesionTargetにて次の目的地を設定し、上記を実施
        if (nodeCounter != nodePoints.Length)
        {
+            ModifyVelocity();
             MoveMobility();
        }
        else
@@ -242,7 +245,7 @@ public class Mover : MonoBehaviour
     private void MoveMobility()
     {
 
-            transform.position = Vector3.MoveTowards(transform.position, nodeVector[nodeCounter], 1.5f * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, nodeVector[nodeCounter], 1.0f * Time.deltaTime);
 
             if (transform.position.x == nodeVector[nodeCounter].x && transform.position.z == nodeVector[nodeCounter].z)
             {
@@ -395,6 +398,30 @@ public class Mover : MonoBehaviour
 
         //次のターゲットターゲットまでの最短経路取得
         CalcDikstra(startUID, _nextUID);
+    }
+
+    //Sako
+    private void ModifyVelocity()
+    {
+        int index = 0;
+        foreach (Vector3 setFrom in lineFromNodeVector)
+        {
+            foreach(Vector3 setTo in lineToNodeVector)
+            {
+                if(nodeCounter == 0)
+                {
+                    continue;
+                }
+
+                if (setTo == nodePoints[nodeCounter - 1] && setFrom == nodePoints[nodeCounter] ||
+                    setFrom == nodePoints[nodeCounter - 1] && setTo == nodePoints[nodeCounter])
+                {
+                    modifiedVelocity = lineComponetWeight[index];
+                }
+            }
+            index++;
+        }
+        //Debug.Log("VelocityWeight = " + modifiedVelocity);
     }
 
 }
