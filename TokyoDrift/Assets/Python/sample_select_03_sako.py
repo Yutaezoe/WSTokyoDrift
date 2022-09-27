@@ -4,7 +4,7 @@ import numpy as np
 
 #pathの設定
 user_ID=13068
-path=f'C:/Users/{user_ID}/dojo/WSTokyoDrift0921/WSTokyoDrift/TokyoDrift/Assets/CSV'
+path=f'C:/Users/{user_ID}/dojo/WSTokyoDrift0928/WSTokyoDrift/TokyoDrift/Assets/CSV'
 
 #ファイル読み込み
 headers=['Mo_ID','Ta_ID','Distance']

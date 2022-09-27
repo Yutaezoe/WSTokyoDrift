@@ -17,8 +17,6 @@ public class Mover : MonoBehaviour
     private int[] _TargetID;
 
     // Initial Position
-    [SerializeField]
-    private GameObject startNodePoint;
     private int startUID;
 
     // Goal Position
@@ -51,7 +49,7 @@ public class Mover : MonoBehaviour
     private Target targetComponent;
     private Vector3[] targetVector3;
     private bool IsAsignWait;
-    ///private bool[] 
+    private Target.TargetStatus[] pickStatus; 
 
     private GameObject moverNodeGO;
     private Node moverNodeArray;
@@ -111,17 +109,21 @@ public class Mover : MonoBehaviour
 
        //// managercompo.distancePassive(_MoveID, _TargetID, eachTargetDistance);
 
-
-        List<bool> targetStatus = new();
+        List<Target.TargetStatus> targetStatus = new();
 
         foreach (Transform setTarget in targetChildren)
         {
             targetComponent = ComFunctions.GetChildrenComponent<Target>(setTarget);
-            targetStatus.Add(targetComponent.PickPoint);
+            targetStatus.Add(targetComponent.StatusOfPikking);
         }
-        //pickStatus = targetStatus.ToArray();
+        pickStatus = targetStatus.ToArray();
+
+        for (int i = 0; i < pickStatus.Length; i++)
+        {
+            Debug.Log(pickStatus[i]);
+        }
     }
-        
+
     // Update is called once per frame
     void Update()
     {
@@ -132,12 +134,12 @@ public class Mover : MonoBehaviour
             //マネージャーに各ターゲットへのデータ渡し
             Manager managercompo = manager.GetComponent<Manager>();
             SettingEachTargetDistance();
-           bool complete= managercompo.distancePassive(_MoveID, _TargetID, eachTargetDistance);
+            bool complete= managercompo.distancePassive(_MoveID, _TargetID, eachTargetDistance);
             if (complete == true)
             {
                 IsCalledDistance = true;
             }
-
+            return;
         }
         //MoverがManagerに一度もアサインされていなければ入る
         if (!IsAsignWait)
@@ -145,9 +147,6 @@ public class Mover : MonoBehaviour
             //Manager側で自身がアサインされたかチェック
             AssignWait();
         }
-
-        //常時、残ターゲットを確認
-        SettingComponent();
 
         //目的地(_nextUID)にたどり着くまでMoveMobilityを繰り返す
         //到達後、DecesionTargetにて次の目的地を設定し、上記を実施
@@ -160,6 +159,9 @@ public class Mover : MonoBehaviour
         {
             nodeCounter = 0;
             startUID = _nextUID;
+
+            //常時、残ターゲットを確認
+            SettingComponent();
             DecesionTarget();
             RouteSetting();
         }
@@ -260,7 +262,42 @@ public class Mover : MonoBehaviour
     //Sako
     private void SettingStartAndGoal()
     {
-        startUID = startNodePoint.GetComponent<Node>().getNodeUID;
+
+        //StartSet
+        int sta = 0;
+        float minDistanceFromStart = float.MaxValue;
+        float distance;
+
+
+        foreach (Vector3 setFromNodeVector in lineFromNodeVector)
+        {
+            distance = Vector3.Distance(setFromNodeVector, transform.position);
+
+            if (minDistanceFromStart > distance)
+            {
+                minDistanceFromStart = distance;
+                startUID = lineFromNodeUID[sta];
+            }
+            sta++;
+        }
+
+        sta = 0;
+
+        foreach (Vector3 setToNodeVector in lineFromNodeVector)
+        {
+            distance = Vector3.Distance(setToNodeVector, transform.position);
+
+            if (minDistanceFromStart > distance)
+            {
+                minDistanceFromStart = distance;
+                startUID = lineFromNodeUID[sta];
+            }
+            sta++;
+        }
+
+        Debug.Log(startUID);
+
+        //startUID = startNodePoint.GetComponent<Node>().getNodeUID;
 
         foreach (Transform goalTarget in targetChildren)
         {
@@ -414,21 +451,60 @@ public class Mover : MonoBehaviour
         CalcDikstra(startUID, _nextUID);
 
         //ターゲットの中から最短経路のものを抽出
-        long costRetrunTemp = 100000;
-        foreach(int tar in targetNearNodeId)
+        int stanum = 0;
+        long costRetrunTemp = long.MaxValue;
+        Target.TargetStatus statusTemp;
+        foreach (Transform setTarget in targetChildren)
         {
+            statusTemp = ComFunctions.GetChildrenComponent<Target>(setTarget).StatusOfPikking;
+
             //残ターゲットが2個以上でgoalUIDは候補から除外
-            if ( tar == goalUID && targetChildren.Length != 1 )
+            if (targetNearNodeId[stanum] == goalUID && targetChildren.Length != 1)
             {
+                stanum++;
+                continue;
+            }
+            else if(statusTemp == Target.TargetStatus.COMPLETED)
+            {
+                stanum++;
                 continue;
             }
 
             //最もコストの低いTargetを抽出
-            if(costReturn[tar] < costRetrunTemp)
+            if (costReturn[stanum] < costRetrunTemp)
             {
-                _nextUID = tar;
+                costRetrunTemp = costReturn[stanum];
+                _nextUID = targetNearNodeId[stanum];
             }
-            costRetrunTemp = costReturn[tar];
+            stanum++;
+        }
+
+        Debug.Log("MoverID " + _MoveID);
+
+        for(int status = 0; status < targetNearNodeId.Length; status++)
+        {
+            foreach (Transform setTarget in targetChildren)
+            {
+                if (targetNearNodeId[status] == _nextUID && targetNearNodeId[status] != goalUID)
+                {
+                    targetComponent = ComFunctions.GetChildrenComponent<Target>(setTarget);
+                    targetComponent.SetStatusOfPikkingCOMPLETED();
+                }
+            }
+        }
+
+        List<Target.TargetStatus> targetStatus = new();
+
+        foreach (Transform setTargetDebug in targetChildren)
+        {
+            targetComponent = ComFunctions.GetChildrenComponent<Target>(setTargetDebug);
+            targetStatus.Add(targetComponent.StatusOfPikking);
+        }
+        pickStatus = targetStatus.ToArray();
+
+        for (int i = 0; i < pickStatus.Length; i++)
+        {
+            Debug.Log(pickStatus[i]);
         }
 
         //次のターゲットターゲットまでの最短経路取得
