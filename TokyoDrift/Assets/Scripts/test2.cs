@@ -8,7 +8,7 @@ public class test2 : MonoBehaviour
     GameObject manager;
     int mo = 1;
     int[] ta = new int[3] { 0, 1, 2 };
-    int[] di = new int[3] { 15, 25, 35 };
+    int[] di = new int[3] { 15, 25, 1 };
     void Start()
     {
         var compo = manager.GetComponent<Manager>();
