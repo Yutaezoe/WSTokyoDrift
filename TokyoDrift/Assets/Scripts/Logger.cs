@@ -54,9 +54,9 @@ public class Logger : MonoBehaviour
                     moverMoverID.Add(moverComponent.PropertyMoveID);
                     moverTargetID.Add(moverComponent.PropertyTargettingPoint);
                     moverTime.Add(DateTime.Now);
-                    Debug.Log("MoverID:" + moverMoverID[count]);
-                    Debug.Log("TargetID:" + moverTargetID[count]);
-                    Debug.Log("Time:" + moverTime[count]);
+                    //Debug.Log("MoverID:" + moverMoverID[count]);
+                    //Debug.Log("TargetID:" + moverTargetID[count]);
+                    //Debug.Log("Time:" + moverTime[count]);
                 }
 
 

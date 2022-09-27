@@ -80,10 +80,6 @@ public class Manager : MonoBehaviour
         //added by kito
         //Check if Assign Buber is kicked by ALL Mover every frame
         countDistancePassiveKick();
-        for (int i = 0; i < _moverID.Count; i++)
-        {
-            print(_moverID[i] + ":::::1111111111111111111111111111111111111111111111111111");
-        }
 
     }
     //moverクラスから各距離情報の変数を受け取ってManager上にデータを格納していく
@@ -224,12 +220,12 @@ public class Manager : MonoBehaviour
 
         ChangeOrderOfArray();
 
-      for(int i = 0; i < assignTargetID.Count; i++)
-        {
-            print("TargetID"+assignTargetID[i]+":"+i);
-            print("MoverID" + assignMoverID[i] + ":" + i);
+      //for(int i = 0; i < assignTargetID.Count; i++)
+      //  {
+      //      print("TargetID"+assignTargetID[i]+":"+i);
+      //      print("MoverID" + assignMoverID[i] + ":" + i);
 
-        }
+      //  }
 
         assignStatus = true;
     }
