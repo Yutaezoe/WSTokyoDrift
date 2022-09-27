@@ -46,17 +46,19 @@ public class Logger : MonoBehaviour
         {
             if (loggerStatus == true)
             {
+
                 //write moverID, targetID and time
                 for (int i = 0; i < mover.Length; i++)
                 {
                     var moverComponent = mover[i].GetComponent<Mover>();
                     moverMoverID.Add(moverComponent.PropertyMoveID);
-                    moverTargetID.Add(moverComponent.PropertyTargetID);
+                    moverTargetID.Add(moverComponent.PropertyTargettingPoint);
                     moverTime.Add(DateTime.Now);
                     Debug.Log("MoverID:" + moverMoverID[count]);
                     Debug.Log("TargetID:" + moverTargetID[count]);
                     Debug.Log("Time:" + moverTime[count]);
                 }
+
 
                 //write to csvfile
                 StreamWriter file = new StreamWriter(@"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\CSV\result.csv", true, Encoding.UTF8);

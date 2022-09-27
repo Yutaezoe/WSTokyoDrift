@@ -12,6 +12,13 @@ public class Target : MonoBehaviour
     [SerializeField]
     private bool pickPoint;
 
+
+
+    //private Node nearNodeComponent;
+    private Vector3 _nearNodeVector3;
+
+
+
     public enum TargetStatus
     {
         ACTIVE,
@@ -27,6 +34,8 @@ public class Target : MonoBehaviour
     public bool GoalPoint { get { return goalPoint; } }
     public bool PickPoint { get { return pickPoint; } }
 
+    public Vector3 NearNodeVector3 { get { return _nearNodeVector3; } }
+
 
     public void SetStatusOfPikkingACTIVE()
     {
@@ -41,15 +50,32 @@ public class Target : MonoBehaviour
         statusOfPikking = TargetStatus.TEMPORARY;
     }
 
+
+    private void Awake()
+    {
+        _nearNodeVector3 = transform.position;
+
+        if (goalPoint)
+        {
+            gameObject.GetComponent<Renderer>().material.color = Color.red;
+        }
+
+    }
+
     // collision detection
     void OnTriggerEnter(Collider collider)
     {
+
+       
         // Regular expressions
         bool result = Regex.IsMatch(collider.gameObject.name, "Bus*");
         if (result)
         {
-            //Debug.Log(collider.gameObject.name);
-            //Destroy(gameObject);
+            if (goalPoint == false)
+            {
+                Destroy(gameObject);
+            }
+            
         }
         
     }
