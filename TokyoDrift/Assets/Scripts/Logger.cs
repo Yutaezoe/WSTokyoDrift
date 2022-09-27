@@ -61,7 +61,7 @@ public class Logger : MonoBehaviour
 
 
                 //write to csvfile
-                StreamWriter file = new StreamWriter(@"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\CSV\result.csv", true, Encoding.UTF8);
+                StreamWriter file = new StreamWriter(@"C:\Users\13068\dojo\WSTokyoDrift0928\WSTokyoDrift\TokyoDrift\Assets\CSV\result.csv", true, Encoding.UTF8);
                 file.WriteLine(string.Format("{0},{1},{2}", moverMoverID[count], moverTargetID[count], moverTime[count]));
                 file.Close();
 
