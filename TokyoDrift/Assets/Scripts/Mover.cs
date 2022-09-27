@@ -8,23 +8,26 @@ public class Mover : MonoBehaviour
 {
 
     [SerializeField]
-    private int MoveID;
+    private int _MoveID;
 
-    private int[] TargetID;
+    private int[] _TargetID;
 
     // Initial Position
     [SerializeField]
     private GameObject startNodePoint;
-    private Node startUID;
+    private int startUID;
+
+    // Goal Position
+    private int _nextUID;
+    private int goalUID;
 
     // Target Lists
     [SerializeField]
     private Transform targetMaster;
 
-
-
-    //[SerializeField]
-    private Transform[] nodePoints;
+    //Move
+    private Vector3[] nodePoints;
+    private int modifiedVelocity;
 
     // Ezoe edit
     [SerializeField]
@@ -65,56 +68,42 @@ public class Mover : MonoBehaviour
     private int[] targetNearNodeId;
 
     //Setting Property
-    public int PropertyMoveID => MoveID;
-    public int[] PropertyTargetID { get { return TargetID; } set { this.TargetID = value; } }
+    public int PropertyMoveID => _MoveID;
+    public int PropertyTargettingPoint => _nextUID;
+    public int[] PropertyTargetID { get { return _TargetID; } set { this._TargetID = value; } }
 
     private void Awake()
     { 
         // Ezoe Edit
         lineChildren = ComFunctions.GetChildren(lineMaster.transform);
-        //
-        // SakoSako Edit
         nodeChildren = ComFunctions.GetChildren(nodeMaster.transform);
-        //
-        targetChildren = ComFunctions.GetChildren(targetMaster.transform);
+        //targetChildren = ComFunctions.GetChildren(targetMaster.transform);
         //
     }
-
 
     // Start is called before the first frame update
     void Start()
     {
-        /////マネージャーへの受け渡し用配列定義
-        Manager manager = new();
-        List<int> targetIDList = new List<int>();
-        List<int> minDistance = new List<int>();
-        /////
-
-        startUID = startNodePoint.GetComponent<Node>();
-        Debug.Log(startUID.getNodeUID);
         //Ezoe
-        CalcDikstra(startUID.getNodeUID, 11);
-        //Ezoe
+        //Fieldの状態を把握
         SettingComponent();
 
-        /////////マネージャーへの受け渡し用配列作成
-        for (int setTarget = 0; setTarget < targetNearNodeId.Length; setTarget++)
-        {
-            targetIDList.Add(targetNearNodeId[setTarget]);
-            minDistance.Add((int)costReturn[targetNearNodeId[setTarget]]);
-        }
+        //Sako
+        //スタート地点とゴール地点を定義
+        SettingStartAndGoal();
 
-        TargetID = targetIDList.ToArray();
-        eachTargetDistance = minDistance.ToArray();
+        //Ezoe
+        //マネージャーへ送る用の情報をダイクストラで計算
+        CalcDikstra(startUID, _nextUID);
 
-        for (int t = 0; t < targetNearNodeId.Length; t++)
-        {
-            Debug.Log($"TargetID:{TargetID[t]} ,Cost:{eachTargetDistance[t]} ");
-        }
-        /////////
-
+        //Sako
         //マネージャーに各ターゲットへのデータ渡し
-        manager.distancePassive(MoveID,TargetID,eachTargetDistance);
+        Manager manager = new();
+        SettingEachTargetDistance();
+        manager.distancePassive(_MoveID, _TargetID,eachTargetDistance);
+
+        //【一時置き】assignWaitの代替
+        DecesionTarget();
 
         //Sako 
         RouteSetting();
@@ -123,14 +112,31 @@ public class Mover : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (nodeCounter != nodePoints.Length)
-        {
+       
+       //常時、残ターゲットを確認
+       SettingComponent();
+
+       //目的地(_nextUID)にたどり着くまでMoveMobilityを繰り返す
+       //到達後、DecesionTargetにて次の目的地を設定し、上記を実施
+       if (nodeCounter != nodePoints.Length)
+       {
+            ModifyVelocity();
             MoveMobility();
-        }
+       }
+       else
+       {
+            nodeCounter = 0;
+            startUID = _nextUID;
+            DecesionTarget();
+            RouteSetting();
+       }
     }
 
+    //Ezoe
     private void SettingComponent()
     {
+        targetChildren = ComFunctions.GetChildren(targetMaster.transform);
+
         Line lineComponent;
         Node nodeComponent;
 
@@ -211,16 +217,35 @@ public class Mover : MonoBehaviour
             }
 
             targetNearNodeList.Add(tempNearNode);
-            Debug.Log(tempNearNode);
+            //Debug.Log(tempNearNode);
         }
 
         targetNearNodeId = targetNearNodeList.ToArray();
     }
 
+    //Sako
+    private void SettingStartAndGoal()
+    {
+        startUID = startNodePoint.GetComponent<Node>().getNodeUID;
+
+        foreach (Transform goalTarget in targetChildren)
+        {
+            Target goalCheck;
+            goalCheck = ComFunctions.GetChildrenComponent<Target>(goalTarget);
+
+            if (goalCheck.GoalPoint)
+            {
+                goalUID = targetNearNodeId[goalCheck.TargetUid];
+                _nextUID = goalUID;
+            }
+        }
+    }
+
+    //Sako
     private void MoveMobility()
     {
 
-            transform.position = Vector3.MoveTowards(transform.position, nodeVector[nodeCounter], 1.5f * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, nodeVector[nodeCounter], 1.0f * Time.deltaTime);
 
             if (transform.position.x == nodeVector[nodeCounter].x && transform.position.z == nodeVector[nodeCounter].z)
             {
@@ -290,35 +315,113 @@ public class Mover : MonoBehaviour
     //Sako
     private void RouteSetting()
     {
-        List<Transform> nodeTrans = new List<Transform>();
+        List<Vector3> nodeTrans = new ();
 
         for (int t = 0; t < routeReturn.Length; t++)
         {
-            foreach (Transform setNode in nodeChildren)
+            foreach (int setNode in lineToNodeUID)
             {
-                moverNodeGO = setNode.gameObject;
-                moverNodeArray = moverNodeGO.GetComponent<Node>();
-                point = moverNodeArray.getNodeUID;
-
-                if (point == routeReturn[t])
+                if (lineFromNodeUID[setNode] == routeReturn[t])
                 {
-                    nodeTrans.Add(setNode);
+                    nodeTrans.Add(lineFromNodeVector[setNode]);
+                } 
+                else if (lineToNodeUID[setNode] == routeReturn[t])
+                {
+                    nodeTrans.Add(lineToNodeVector[setNode]);
                 }
             }
             nodePoints = nodeTrans.ToArray();
         }
 
-        startNodeVector = nodePoints[0].position;
+        startNodeVector = nodePoints[0];
         startNodeVector.y = 0.25f;
         transform.position = startNodeVector;
 
         nodeVector = new Vector3[nodePoints.Length];
 
+        //不要では？
         for (int i = 0; i < nodeVector.Length; i++)
         {
-            nodeVector[i] = nodePoints[i].position;
+            nodeVector[i] = nodePoints[i];
             nodeVector[i].y = 0.25f;
         }
+    }
+
+    //Sako
+    private void SettingEachTargetDistance()
+    {
+        /////マネージャーへの受け渡し用配列定義
+        List<int> targetIDList = new List<int>();
+        List<int> minDistance = new List<int>();
+        /////
+        /////////マネージャーへの受け渡し用配列作成
+        for (int setTarget = 0; setTarget < targetNearNodeId.Length; setTarget++)
+        {
+            targetIDList.Add(targetNearNodeId[setTarget]);
+            minDistance.Add((int)costReturn[targetNearNodeId[setTarget]]);
+        }
+
+        _TargetID = targetIDList.ToArray();
+        eachTargetDistance = minDistance.ToArray();
+
+        //for (int t = 0; t < targetNearNodeId.Length; t++)
+        //{
+        //    Debug.Log($"TargetID:{TargetID[t]} ,Cost:{eachTargetDistance[t]} ");
+        //}
+        /////////
+    }
+
+    //Sako
+    private void DecesionTarget()
+    {
+
+        //ダイクストラのプリ計算
+        CalcDikstra(startUID, _nextUID);
+
+        //ターゲットの中から最短経路のものを抽出
+        long costRetrunTemp = 100000;
+        foreach(int tar in targetNearNodeId)
+        {
+            //残ターゲットが2個以上でgoalUIDは候補から除外
+            if ( tar == goalUID && targetChildren.Length != 1 )
+            {
+                continue;
+            }
+            
+            //最もコストの低いTargetを抽出
+            if(costReturn[tar] < costRetrunTemp)
+            {
+                _nextUID = tar;
+            }
+            costRetrunTemp = costReturn[tar];
+        }
+
+        //次のターゲットターゲットまでの最短経路取得
+        CalcDikstra(startUID, _nextUID);
+    }
+
+    //Sako
+    private void ModifyVelocity()
+    {
+        int index = 0;
+        foreach (Vector3 setFrom in lineFromNodeVector)
+        {
+            foreach(Vector3 setTo in lineToNodeVector)
+            {
+                if(nodeCounter == 0)
+                {
+                    continue;
+                }
+
+                if (setTo == nodePoints[nodeCounter - 1] && setFrom == nodePoints[nodeCounter] ||
+                    setFrom == nodePoints[nodeCounter - 1] && setTo == nodePoints[nodeCounter])
+                {
+                    modifiedVelocity = lineComponetWeight[index];
+                }
+            }
+            index++;
+        }
+        //Debug.Log("VelocityWeight = " + modifiedVelocity);
     }
 
 }
