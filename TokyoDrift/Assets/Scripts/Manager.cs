@@ -24,6 +24,7 @@ public class Manager : MonoBehaviour
     [SerializeField] private GameObject target2;
     [SerializeField] private GameObject logger;
     [SerializeField] private GameObject timer;
+    [SerializeField] private GameObject targetMaster;
 
 
     private Transform[] moverGC;
@@ -41,13 +42,11 @@ public class Manager : MonoBehaviour
     private int countMover;
     private int countTarget;
     private int countKickOfdistancePassive ;
-    [SerializeField]
-    private GameObject targetMaster;
-    //private string pyExePath = @"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\Python\tst.exe";
-    //private string pyCodePath = @"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\Python\tst.py";
 
-    private string pyExePath = @"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\Python\sample_select_03.exe";
-    private string pyCodePath = @"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\Python\sample_select_03.py";
+    static string path = Directory.GetCurrentDirectory();
+
+    private string pyExePath = path+@"\Assets\Python\sample_select_04.exe";
+    private string pyCodePath = path+@"\Assets\Python\sample_select_04.py";
 
 
     //kito added 2
@@ -80,10 +79,6 @@ public class Manager : MonoBehaviour
         //added by kito
         //Check if Assign Buber is kicked by ALL Mover every frame
         countDistancePassiveKick();
-        for (int i = 0; i < _moverID.Count; i++)
-        {
-            print(_moverID[i] + ":::::1111111111111111111111111111111111111111111111111111");
-        }
 
     }
     //moverクラスから各距離情報の変数を受け取ってManager上にデータを格納していく
@@ -176,7 +171,7 @@ public class Manager : MonoBehaviour
     void MakeCSVdistancePassive()
     {
 
-        using (var fileStream = new FileStream(@"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\CSV\toPython.csv", FileMode.Open))
+        using (var fileStream = new FileStream(path+@"\Assets\Python\csv\toPython.csv", FileMode.Open))
         {
             //Delate toPython.csv
             // ストリームの長さを0に設定します。
@@ -185,7 +180,7 @@ public class Manager : MonoBehaviour
         }
 
 
-        StreamWriter file = new StreamWriter(@"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\CSV\toPython.csv", true, Encoding.UTF8);
+        StreamWriter file = new StreamWriter(path + @"\Assets\Python\csv\toPython.csv", true, Encoding.UTF8);
         for (int i = 0; i < _moverID.Count; i++)
         {
             file.WriteLine(string.Format("{0},{1},{2}", _moverID[i], _targetID[i], _distance[i]));
@@ -198,7 +193,7 @@ public class Manager : MonoBehaviour
     void ReadCSVAssignMover()
     {
         // CSVファイルの読み込み
-        string filePath = @"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\CSV\toCS.csv";
+        string filePath = path+ @"\Assets\Python\csv\toCS.csv";
         // StreamReaderクラスをインスタンス化
         StreamReader reader = new StreamReader(filePath, Encoding.GetEncoding("UTF-8"));
         // 最後まで読み込む
