@@ -46,8 +46,8 @@ public class Manager : MonoBehaviour
     //private string pyExePath = @"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\Python\tst.exe";
     //private string pyCodePath = @"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\Python\tst.py";
 
-    private string pyExePath = @"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\Python\sample_select_03.exe";
-    private string pyCodePath = @"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\Python\sample_select_03.py";
+    private string pyExePath = @"C:\Users\13068\dojo\WSTokyoDrift0928\WSTokyoDrift\TokyoDrift\Assets\Python\sample_select_03_sako.exe";
+    private string pyCodePath = @"C:\Users\13068\dojo\WSTokyoDrift0928\WSTokyoDrift\TokyoDrift\Assets\Python\sample_select_03_sako.py";
 
 
     //kito added 2
@@ -80,10 +80,6 @@ public class Manager : MonoBehaviour
         //added by kito
         //Check if Assign Buber is kicked by ALL Mover every frame
         countDistancePassiveKick();
-        for (int i = 0; i < _moverID.Count; i++)
-        {
-            print(_moverID[i] + ":::::1111111111111111111111111111111111111111111111111111");
-        }
 
     }
     //moverクラスから各距離情報の変数を受け取ってManager上にデータを格納していく
@@ -176,7 +172,7 @@ public class Manager : MonoBehaviour
     void MakeCSVdistancePassive()
     {
 
-        using (var fileStream = new FileStream(@"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\CSV\toPython.csv", FileMode.Open))
+        using (var fileStream = new FileStream(@"C:\Users\13068\dojo\WSTokyoDrift0928\WSTokyoDrift\TokyoDrift\Assets\CSV\toPython.csv", FileMode.Open))
         {
             //Delate toPython.csv
             // ストリームの長さを0に設定します。
@@ -185,7 +181,7 @@ public class Manager : MonoBehaviour
         }
 
 
-        StreamWriter file = new StreamWriter(@"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\CSV\toPython.csv", true, Encoding.UTF8);
+        StreamWriter file = new StreamWriter(@"C:\Users\13068\dojo\WSTokyoDrift0928\WSTokyoDrift\TokyoDrift\Assets\CSV\toPython.csv", true, Encoding.UTF8);
         for (int i = 0; i < _moverID.Count; i++)
         {
             file.WriteLine(string.Format("{0},{1},{2}", _moverID[i], _targetID[i], _distance[i]));
@@ -198,7 +194,7 @@ public class Manager : MonoBehaviour
     void ReadCSVAssignMover()
     {
         // CSVファイルの読み込み
-        string filePath = @"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\CSV\toCS.csv";
+        string filePath = @"C:\Users\13068\dojo\WSTokyoDrift0928\WSTokyoDrift\TokyoDrift\Assets\CSV\toCS.csv";
         // StreamReaderクラスをインスタンス化
         StreamReader reader = new StreamReader(filePath, Encoding.GetEncoding("UTF-8"));
         // 最後まで読み込む
@@ -224,12 +220,12 @@ public class Manager : MonoBehaviour
 
         ChangeOrderOfArray();
 
-      for(int i = 0; i < assignTargetID.Count; i++)
-        {
-            print("TargetID"+assignTargetID[i]+":"+i);
-            print("MoverID" + assignMoverID[i] + ":" + i);
+      //for(int i = 0; i < assignTargetID.Count; i++)
+      //  {
+      //      print("TargetID"+assignTargetID[i]+":"+i);
+      //      print("MoverID" + assignMoverID[i] + ":" + i);
 
-        }
+      //  }
 
         assignStatus = true;
     }
