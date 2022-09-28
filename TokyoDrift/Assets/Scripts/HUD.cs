@@ -20,10 +20,14 @@ public class HUD : MonoBehaviour
     const string TIMEPREFIX = "Time: ";
     const string REMAININGPREFIX = "Remaining: ";
     float timeleft = 1.0f;
+    int displayArrayRange=0;
 
     private Transform[] arrayTarget;
 
-
+    public int PropetyRemaining
+    {
+        get { return displayArrayRange; }
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -32,7 +36,8 @@ public class HUD : MonoBehaviour
 
         // TargetMaster targetMasterCompo = targetMaster.GetComponent<TargetMaster>();
         arrayTarget=ComFunctions.GetChildren(targetMaster.transform);
-        remainingText.text = REMAININGPREFIX + arrayTarget.Length;
+        displayArrayRange = arrayTarget.Length - 1;
+        remainingText.text = REMAININGPREFIX + displayArrayRange;
     }
 
     // Update is called once per frame
@@ -45,7 +50,8 @@ public class HUD : MonoBehaviour
         if (timeleft <= 0)
         {
             arrayTarget = ComFunctions.GetChildren(targetMaster.transform);
-            remainingText.text = REMAININGPREFIX + arrayTarget.Length;
+            displayArrayRange = arrayTarget.Length - 1;
+            remainingText.text = REMAININGPREFIX + displayArrayRange;
             timeleft = 1.0f;
         }
 

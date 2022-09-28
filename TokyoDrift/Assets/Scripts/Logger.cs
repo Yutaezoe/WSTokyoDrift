@@ -12,6 +12,10 @@ public class Logger : MonoBehaviour
 
     [SerializeField]
     private GameObject moverMaster;
+    [SerializeField]
+    GameObject timer;
+    [SerializeField]
+    GameObject HUD;
 
     private Transform[] arrayMover;
     private GameObject[] mover;
@@ -22,6 +26,10 @@ public class Logger : MonoBehaviour
     List<int> moverTargetID = new List<int>();
     List<int> moverMoverID = new List<int>();
     List<DateTime> moverTime = new List<DateTime>();
+    List<string> moverTimeCount = new List<string>();
+    List<int> remainingCount = new List<int>();
+
+
     //state relative path
     static string path = Directory.GetCurrentDirectory();
 
@@ -49,6 +57,8 @@ public class Logger : MonoBehaviour
 
     void Update()
     {
+        Timer timercompo = timer.GetComponent<Timer>();
+        HUD HUDcompo = HUD.GetComponent<HUD>();
         //timer for counting 1second
         timeleft -= Time.deltaTime;
         if (timeleft <= 0)
@@ -63,23 +73,28 @@ public class Logger : MonoBehaviour
                     moverMoverID.Add(moverComponent.PropertyMoveID);
                     moverTargetID.Add(moverComponent.PropertyTargettingPoint);
                     moverTime.Add(DateTime.Now);
-                    //Debug.Log("MoverID:" + moverMoverID[count]);
-                    //Debug.Log("TargetID:" + moverTargetID[count]);
-                    //Debug.Log("Time:" + moverTime[count]);
+                    moverTimeCount.Add(timercompo.GetTimerCount);
+                    remainingCount.Add(HUDcompo.PropetyRemaining);
+
+                    StreamWriter file = new StreamWriter(path + @"\Assets\Python\csv\result.csv", true, Encoding.UTF8);
+
+                    file.WriteLine(string.Format("{0},{1},{2},{3},{4}", moverMoverID[count], moverTargetID[count], moverTime[count], moverTimeCount[count], remainingCount[count]));
+                    file.Close();
+                    count += 1;
                 }
 
 
                 //write to csvfile
 
-                StreamWriter file = new StreamWriter(path+@"\Assets\Python\csv\result.csv", true, Encoding.UTF8);
+                //StreamWriter file = new StreamWriter(path+@"\Assets\Python\csv\result.csv", true, Encoding.UTF8);
 
-                file.WriteLine(string.Format("{0},{1},{2}", moverMoverID[count], moverTargetID[count], moverTime[count]));
-                file.Close();
+                //file.WriteLine(string.Format("{0},{1},{2},{3}", moverMoverID[count], moverTargetID[count], moverTime[count],moverTimeCount[count]));
+                //file.Close();
 
             }
             //reset counter 
             timeleft = 1.0f;
-            count += 1;
+
         }
 
     }
