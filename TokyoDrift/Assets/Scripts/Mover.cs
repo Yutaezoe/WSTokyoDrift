@@ -8,7 +8,7 @@ public class Mover : MonoBehaviour
 {
 
     #region Mover's Field
-    //ManagerƒNƒ‰ƒX‚ÌŒÄ‚Ño‚µ—p
+    //Managerï¿½Nï¿½ï¿½ï¿½Xï¿½ÌŒÄ‚Ñoï¿½ï¿½ï¿½p
     [SerializeField]
     GameObject manager;
 
@@ -17,8 +17,6 @@ public class Mover : MonoBehaviour
     private int[] _TargetID;
 
     // Initial Position
-    [SerializeField]
-    private GameObject startNodePoint;
     private int startUID;
 
     // Goal Position
@@ -51,7 +49,7 @@ public class Mover : MonoBehaviour
     private Target targetComponent;
     private Vector3[] targetVector3;
     private bool IsAsignWait;
-    ///private bool[] 
+    private Target.TargetStatus[] pickStatus; 
 
     private GameObject moverNodeGO;
     private Node moverNodeArray;
@@ -73,6 +71,7 @@ public class Mover : MonoBehaviour
     private Vector3[] lineToNodeVector;
     private int[] targetNearNodeId;
     private bool IsCalledDistance = false;
+    private Vector3 goalPosition;
     #endregion
 
     #region Setting Property
@@ -93,75 +92,86 @@ public class Mover : MonoBehaviour
     void Start()
     {
         //Ezoe
-        //Field‚Ìó‘Ô‚ğ”cˆ¬
+        //Fieldï¿½Ìï¿½Ô‚ï¿½cï¿½ï¿½
         SettingComponent();
 
         //Sako
-        //ƒXƒ^[ƒg’n“_‚ÆƒS[ƒ‹’n“_‚ğ’è‹`
+        //ï¿½Xï¿½^ï¿½[ï¿½gï¿½nï¿½_ï¿½ÆƒSï¿½[ï¿½ï¿½ï¿½nï¿½_ï¿½ï¿½ï¿½`
         SettingStartAndGoal();
 
         //Ezoe
-        //ƒ}ƒl[ƒWƒƒ[‚Ö‘—‚é—p‚Ìî•ñ‚ğƒ_ƒCƒNƒXƒgƒ‰‚ÅŒvZ
+        //ï¿½}ï¿½lï¿½[ï¿½Wï¿½ï¿½ï¿½[ï¿½Ö‘ï¿½ï¿½ï¿½pï¿½Ìï¿½ï¿½ï¿½ï¿½_ï¿½Cï¿½Nï¿½Xï¿½gï¿½ï¿½ï¿½ÅŒvï¿½Z
         CalcDikstra(startUID, _nextUID);
 
-       // //Sako
-       // //ƒ}ƒl[ƒWƒƒ[‚ÉŠeƒ^[ƒQƒbƒg‚Ö‚Ìƒf[ƒ^“n‚µ
-       // Manager managercompo = manager.GetComponent<Manager>();
-       // SettingEachTargetDistance();
-
-       //// managercompo.distancePassive(_MoveID, _TargetID, eachTargetDistance);
-
-
-        List<bool> targetStatus = new();
+        List<Target.TargetStatus> targetStatus = new();
 
         foreach (Transform setTarget in targetChildren)
         {
             targetComponent = ComFunctions.GetChildrenComponent<Target>(setTarget);
-            targetStatus.Add(targetComponent.PickPoint);
+            targetStatus.Add(targetComponent.StatusOfPikking);
         }
-        //pickStatus = targetStatus.ToArray();
+        pickStatus = targetStatus.ToArray();
+
+        for (int i = 0; i < pickStatus.Length; i++)
+        {
+            Debug.Log(pickStatus[i]);
+        }
     }
-        
+
     // Update is called once per frame
+    // ï¿½lï¿½Xï¿½gï¿½[ï¿½ß’ï¿½ï¿½ï¿½
     void Update()
     {
-
-        if (!IsCalledDistance)
+        //Goalï¿½É“ï¿½ï¿½Bï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½ï¿½returnï¿½ï¿½Ô‚ï¿½
+        float distanceFromGoal = Vector3.Distance(transform.position, goalPosition);
+        if (distanceFromGoal < 0.2f && targetChildren.Length == 1)
         {
-            //Sako
-            //ƒ}ƒl[ƒWƒƒ[‚ÉŠeƒ^[ƒQƒbƒg‚Ö‚Ìƒf[ƒ^“n‚µ
-            Manager managercompo = manager.GetComponent<Manager>();
-            SettingEachTargetDistance();
-           bool complete= managercompo.distancePassive(_MoveID, _TargetID, eachTargetDistance);
-            if (complete == true)
-            {
-                IsCalledDistance = true;
-            }
-
-        }
-        //Mover‚ªManager‚Éˆê“x‚àƒAƒTƒCƒ“‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î“ü‚é
-        if (!IsAsignWait)
-        {
-            //Manager‘¤‚Å©g‚ªƒAƒTƒCƒ“‚³‚ê‚½‚©ƒ`ƒFƒbƒN
-            AssignWait();
-        }
-
-        //íAcƒ^[ƒQƒbƒg‚ğŠm”F
-        SettingComponent();
-
-        //–Ú“I’n(_nextUID)‚É‚½‚Ç‚è’…‚­‚Ü‚ÅMoveMobility‚ğŒJ‚è•Ô‚·
-        //“’BŒãADecesionTarget‚É‚ÄŸ‚Ì–Ú“I’n‚ğİ’è‚µAã‹L‚ğÀ{
-        if (nodeCounter != nodePoints.Length)
-        {
-            ModifyVelocity();
-            MoveMobility();
+            return;
         }
         else
         {
-            nodeCounter = 0;
-            startUID = _nextUID;
-            DecesionTarget();
-            RouteSetting();
+            if (!IsCalledDistance)
+            {
+                //Sako
+                //ï¿½}ï¿½lï¿½[ï¿½Wï¿½ï¿½ï¿½[ï¿½ÉŠeï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½Ö‚Ìƒfï¿½[ï¿½^ï¿½nï¿½ï¿½
+                Manager managercompo = manager.GetComponent<Manager>();
+                SettingEachTargetDistance();
+                bool complete = managercompo.distancePassive(_MoveID, _TargetID, eachTargetDistance);
+                if (complete == true)
+                {
+                    IsCalledDistance = true;
+                }
+                return;
+            }
+            else
+            {
+                //Moverï¿½ï¿½Managerï¿½Éˆï¿½xï¿½ï¿½ï¿½Aï¿½Tï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½È‚ï¿½ï¿½ï¿½Î“ï¿½ï¿½ï¿½
+                if (!IsAsignWait)
+                {
+                    //Managerï¿½ï¿½ï¿½Åï¿½ï¿½gï¿½ï¿½ï¿½Aï¿½Tï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N
+                    AssignWait();
+                }
+                else
+                {
+                    //ï¿½íï¿½Aï¿½cï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½ï¿½ï¿½mï¿½F
+                    SettingComponent();
+
+                    //ï¿½Ú“Iï¿½n(_nextUID)ï¿½É‚ï¿½ï¿½Ç‚è’…ï¿½ï¿½ï¿½Ü‚ï¿½MoveMobilityï¿½ï¿½ï¿½Jï¿½ï¿½Ô‚ï¿½
+                    //ï¿½ï¿½ï¿½Bï¿½ï¿½ADecesionTargetï¿½É‚Äï¿½ï¿½Ì–Ú“Iï¿½nï¿½ï¿½İ’è‚µï¿½Aï¿½ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½{
+                    if (nodeCounter != nodePoints.Length)
+                    {
+                        ModifyVelocity();
+                        MoveMobility();
+                    }
+                    else
+                    {
+                        nodeCounter = 0;
+                        startUID = _nextUID;
+                        DecesionTarget();
+                        RouteSetting();
+                    }
+                }
+            }
         }
     }
 
@@ -183,7 +193,7 @@ public class Mover : MonoBehaviour
         List<Vector3> lineToNodeVectorList = new();
         List<Vector3> TargetVector3 = new List<Vector3>();
 
-        // Line‚æ‚èUID d‚³ Ú‘±ˆÊ’u‚Ìæ“¾‚ğs‚¤
+        // Lineï¿½ï¿½ï¿½UID ï¿½dï¿½ï¿½ ï¿½Ú‘ï¿½ï¿½Ê’uï¿½Ìæ“¾ï¿½ï¿½ï¿½sï¿½ï¿½
         foreach (Transform setLineChild in lineChildren)
         {
             lineComponent = ComFunctions.GetChildrenComponent<Line>(setLineChild);
@@ -203,7 +213,7 @@ public class Mover : MonoBehaviour
         lineFromNodeVector = lineFromNodeVectorList.ToArray();
         lineToNodeVector = lineToNodeVectorList.ToArray();
 
-        // Target‚ÌˆÊ’u‚Ìæ“¾‚ğs‚¤
+        // Targetï¿½ÌˆÊ’uï¿½Ìæ“¾ï¿½ï¿½ï¿½sï¿½ï¿½
         foreach (Transform setTarget in targetChildren)
         {
             targetComponent = ComFunctions.GetChildrenComponent<Target>(setTarget);
@@ -260,7 +270,42 @@ public class Mover : MonoBehaviour
     //Sako
     private void SettingStartAndGoal()
     {
-        startUID = startNodePoint.GetComponent<Node>().getNodeUID;
+
+        //StartSet
+        int sta = 0;
+        float minDistanceFromStart = float.MaxValue;
+        float distance;
+
+
+        foreach (Vector3 setFromNodeVector in lineFromNodeVector)
+        {
+            distance = Vector3.Distance(setFromNodeVector, transform.position);
+
+            if (minDistanceFromStart > distance)
+            {
+                minDistanceFromStart = distance;
+                startUID = lineFromNodeUID[sta];
+            }
+            sta++;
+        }
+
+        sta = 0;
+
+        foreach (Vector3 setToNodeVector in lineFromNodeVector)
+        {
+            distance = Vector3.Distance(setToNodeVector, transform.position);
+
+            if (minDistanceFromStart > distance)
+            {
+                minDistanceFromStart = distance;
+                startUID = lineFromNodeUID[sta];
+            }
+            sta++;
+        }
+
+       
+
+        //startUID = startNodePoint.GetComponent<Node>().getNodeUID;
 
         foreach (Transform goalTarget in targetChildren)
         {
@@ -271,8 +316,11 @@ public class Mover : MonoBehaviour
             {
                 goalUID = targetNearNodeId[goalCheck.TargetUid];
                 _nextUID = goalUID;
+                goalPosition = goalCheck.NearNodeVector3;
             }
         }
+
+        Debug.Log(startUID + "" + goalUID+$"({goalPosition})");
     }
 
     //Sako
@@ -307,7 +355,7 @@ public class Mover : MonoBehaviour
 
         foreach (Transform setTrans in lineChildren)
         {
-            //qƒ‰ƒCƒ“‚©‚çAƒ‰ƒCƒ“d‚İApoinA,B‚ğ”z—ñ‚ÉŠi”[
+            //ï¿½qï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½dï¿½İApoinA,Bï¿½ï¿½zï¿½ï¿½ÉŠiï¿½[
             
             lineGO = setTrans.gameObject;
             lineArray = lineGO.GetComponent<Line>();
@@ -374,7 +422,7 @@ public class Mover : MonoBehaviour
 
         nodeVector = new Vector3[nodePoints.Length];
 
-        //•s—v‚Å‚ÍH
+        //ï¿½sï¿½vï¿½Å‚ÍH
         for (int i = 0; i < nodeVector.Length; i++)
         {
             nodeVector[i] = nodePoints[i];
@@ -385,11 +433,11 @@ public class Mover : MonoBehaviour
     //Sako
     private void SettingEachTargetDistance()
     {
-        /////ƒ}ƒl[ƒWƒƒ[‚Ö‚Ìó‚¯“n‚µ—p”z—ñ’è‹`
+        /////ï¿½}ï¿½lï¿½[ï¿½Wï¿½ï¿½ï¿½[ï¿½Ö‚Ìó‚¯“nï¿½ï¿½ï¿½pï¿½zï¿½ï¿½ï¿½`
         List<int> targetIDList = new List<int>();
         List<int> minDistance = new List<int>();
         /////
-        /////////ƒ}ƒl[ƒWƒƒ[‚Ö‚Ìó‚¯“n‚µ—p”z—ñì¬
+        /////////ï¿½}ï¿½lï¿½[ï¿½Wï¿½ï¿½ï¿½[ï¿½Ö‚Ìó‚¯“nï¿½ï¿½ï¿½pï¿½zï¿½ï¿½ì¬
         for (int setTarget = 0; setTarget < targetNearNodeId.Length; setTarget++)
         {
             targetIDList.Add(targetNearNodeId[setTarget]);
@@ -410,28 +458,62 @@ public class Mover : MonoBehaviour
     private void DecesionTarget()
     {
 
-        //ƒ_ƒCƒNƒXƒgƒ‰‚ÌƒvƒŠŒvZ
+        //ï¿½_ï¿½Cï¿½Nï¿½Xï¿½gï¿½ï¿½ï¿½Ìƒvï¿½ï¿½ï¿½vï¿½Z
         CalcDikstra(startUID, _nextUID);
 
-        //ƒ^[ƒQƒbƒg‚Ì’†‚©‚çÅ’ZŒo˜H‚Ì‚à‚Ì‚ğ’Šo
-        long costRetrunTemp = 100000;
-        foreach(int tar in targetNearNodeId)
+        //ï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½Ì’ï¿½ï¿½ï¿½ï¿½ï¿½Å’Zï¿½oï¿½Hï¿½Ì‚ï¿½ï¿½Ì‚ğ’Šo
+        int stanum = 0;
+        long costRetrunTemp = long.MaxValue;
+        Target.TargetStatus statusTemp;
+        foreach (Transform setTarget in targetChildren)
         {
-            //cƒ^[ƒQƒbƒg‚ª2ŒÂˆÈã‚ÅgoalUID‚ÍŒó•â‚©‚çœŠO
-            if ( tar == goalUID && targetChildren.Length != 1 )
+            statusTemp = ComFunctions.GetChildrenComponent<Target>(setTarget).StatusOfPikking;
+
+            //ï¿½cï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½ï¿½2ï¿½ÂˆÈï¿½ï¿½goalUIDï¿½ÍŒï¿½â‚©ï¿½çœï¿½O
+            if (targetNearNodeId[stanum] == goalUID && targetChildren.Length != 1)
             {
+                stanum++;
+                continue;
+            }
+            else if (statusTemp == Target.TargetStatus.COMPLETED)
+            {
+                stanum++;
                 continue;
             }
 
-            //Å‚àƒRƒXƒg‚Ì’á‚¢Target‚ğ’Šo
-            if(costReturn[tar] < costRetrunTemp)
+            //ï¿½Å‚ï¿½ï¿½Rï¿½Xï¿½gï¿½Ì’á‚¢Targetï¿½ğ’Šo
+            if (costReturn[stanum] < costRetrunTemp)
             {
-                _nextUID = tar;
+                costRetrunTemp = costReturn[stanum];
+                _nextUID = targetNearNodeId[stanum];
             }
-            costRetrunTemp = costReturn[tar];
+            stanum++;
         }
+        //if (targetNearNodeId[stanum] != goalUID)
+        //{
+        //    Debug.Log(" TargetNode " + targetNearNodeId[stanum]);
+        //    targetComponent = ComFunctions.GetChildrenComponent<Target>(targetChildren[stanum]);
+        //    targetComponent.SetStatusOfPikkingCOMPLETED();
+        //}
+       
 
-        //Ÿ‚Ìƒ^[ƒQƒbƒgƒ^[ƒQƒbƒg‚Ü‚Å‚ÌÅ’ZŒo˜Hæ“¾
+        List<Target.TargetStatus> targetStatus = new();
+
+        foreach (Transform setTargetDebug in targetChildren)
+        {
+            targetComponent = ComFunctions.GetChildrenComponent<Target>(setTargetDebug);
+            targetStatus.Add(targetComponent.StatusOfPikking);
+        }
+        pickStatus = targetStatus.ToArray();
+
+        //for (int i = 0; i < pickStatus.Length; i++)
+        //{
+        //    Debug.Log(pickStatus[i]);
+        //}
+
+        Debug.Log($"Mover {_MoveID} : next {_nextUID}");
+
+        //ï¿½ï¿½ï¿½Ìƒ^ï¿½[ï¿½Qï¿½bï¿½gï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½Ü‚Å‚ÌÅ’Zï¿½oï¿½Hï¿½æ“¾
         CalcDikstra(startUID, _nextUID);
     }
 
@@ -460,7 +542,7 @@ public class Mover : MonoBehaviour
     private void AssignWait()
     {
         bool assignTriger;
-        //ManagerƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚Ìd•û—vŒŸ“¢
+        //Managerï¿½Nï¿½ï¿½ï¿½Xï¿½ÌƒCï¿½ï¿½ï¿½Xï¿½^ï¿½ï¿½ï¿½Xï¿½Ìdï¿½ï¿½ï¿½vï¿½ï¿½ï¿½ï¿½
         Manager manageComponent = manager.GetComponent<Manager>();
         assignTriger = manageComponent.PropertyAssign;
         if (!assignTriger)
