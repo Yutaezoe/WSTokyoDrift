@@ -37,8 +37,8 @@ public class Manager : MonoBehaviour
     //state relative path
     static string path = Directory.GetCurrentDirectory();
 
-    private string pyExePath = path + @"\Assets\Python\sample_select_04.exe";
-    private string pyCodePath = path + @"\Assets\Python\sample_select_04.py";
+    private string pyExePath = path + @"\Assets\Python\sample_select_07.exe";
+    private string pyCodePath = path + @"\Assets\Python\sample_select_07.py";
 
 
     //kito added 2
@@ -176,7 +176,7 @@ public class Manager : MonoBehaviour
     void ReadCSVAssignMover()
     {
         // CSVファイルの読み込み
-        string filePath = path + @"\Assets\CSV\toCS.csv";
+        string filePath = path + @"\Assets\Python\csv\toCS.csv";
         // StreamReaderクラスをインスタンス化
         StreamReader reader = new StreamReader(filePath, Encoding.GetEncoding("UTF-8"));
         // 最後まで読み込む
@@ -196,13 +196,14 @@ public class Manager : MonoBehaviour
 
                 }
             }
-            Console.ReadLine();
+
         }
         reader.Close();
 
         ChangeOrderOfArray();
 
         assignStatus = true;
+
     }
 
     void ChangeOrderOfArray()
