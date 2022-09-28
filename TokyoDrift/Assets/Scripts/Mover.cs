@@ -115,6 +115,11 @@ public class Mover : MonoBehaviour
         if (distanceFromGoal < 0.2f && targetChildren.Length == 1)
         {
             _IsGaolTrigger = true;
+
+            //Eliminate the mover in a simulated manner
+            Vector3 reScale = gameObject.transform.localScale;
+            reScale *=  0.01f;
+            gameObject.transform.localScale = reScale;
             return;
         }
         else
@@ -258,38 +263,46 @@ public class Mover : MonoBehaviour
     {
 
         //StartSet
-        int sta = 0;
         float minDistanceFromStart = float.MaxValue;
         float distance;
 
-
-        foreach (Vector3 setFromNodeVector in lineFromNodeVector)
+        foreach(Transform setNode in nodeChildren)
         {
-            distance = Vector3.Distance(setFromNodeVector, transform.position);
-
-            if (minDistanceFromStart > distance)
+            distance = Vector3.Distance(transform.position,setNode.position);
+            if(distance < minDistanceFromStart)
             {
                 minDistanceFromStart = distance;
-                startUID = lineFromNodeUID[sta];
+                startUID = ComFunctions.GetChildrenComponent<Node>(setNode).getNodeUID;
             }
-            sta++;
         }
 
-        sta = 0;
+        //foreach (Vector3 setFromNodeVector in lineFromNodeVector)
+        //{
+        //    distance = Vector3.Distance(setFromNodeVector, transform.position);
 
-        foreach (Vector3 setToNodeVector in lineFromNodeVector)
-        {
-            distance = Vector3.Distance(setToNodeVector, transform.position);
+        //    if (minDistanceFromStart > distance)
+        //    {
+        //        minDistanceFromStart = distance;
+        //        startUID = lineFromNodeUID[sta];
+        //    }
+        //    sta++;
+        //}
 
-            if (minDistanceFromStart > distance)
-            {
-                minDistanceFromStart = distance;
-                startUID = lineFromNodeUID[sta];
-            }
-            sta++;
-        }
+        //sta = 0;
 
-       
+        //foreach (Vector3 setToNodeVector in lineFromNodeVector)
+        //{
+        //    distance = Vector3.Distance(setToNodeVector, transform.position);
+
+        //    if (minDistanceFromStart > distance)
+        //    {
+        //        minDistanceFromStart = distance;
+        //        startUID = lineFromNodeUID[sta];
+        //    }
+        //    sta++;
+        //}
+
+
 
         //startUID = startNodePoint.GetComponent<Node>().getNodeUID;
 
