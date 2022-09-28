@@ -386,19 +386,34 @@ public class Mover : MonoBehaviour
     {
         List<Vector3> nodeTrans = new ();
 
+        //for (int t = 0; t < routeReturn.Length; t++)
+        //{
+        //    foreach (int setNode in lineToNodeUID)
+        //    {
+        //        if (lineFromNodeUID[setNode] == routeReturn[t])
+        //        {
+        //            nodeTrans.Add(lineFromNodeVector[setNode]);
+        //        } 
+        //        else if (lineToNodeUID[setNode] == routeReturn[t])
+        //        {
+        //            nodeTrans.Add(lineToNodeVector[setNode]);
+        //        }
+        //    }
+        //    nodePoints = nodeTrans.ToArray();
+        //}
+
         for (int t = 0; t < routeReturn.Length; t++)
         {
-            foreach (int setNode in lineToNodeUID)
+            foreach (Transform setNode in nodeChildren)
             {
-                if (lineFromNodeUID[setNode] == routeReturn[t])
+                int tempNodeID = ComFunctions.GetChildrenComponent<Node>(setNode).getNodeUID;
+
+                if (tempNodeID == routeReturn[t])
                 {
-                    nodeTrans.Add(lineFromNodeVector[setNode]);
-                } 
-                else if (lineToNodeUID[setNode] == routeReturn[t])
-                {
-                    nodeTrans.Add(lineToNodeVector[setNode]);
+                    nodeTrans.Add(setNode.position);
                 }
             }
+
             nodePoints = nodeTrans.ToArray();
         }
 
