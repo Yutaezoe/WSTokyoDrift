@@ -73,6 +73,7 @@ public class EditMover : MonoBehaviour
 
 		MovingObject();
 
+		//Debug.Log(_isDelAllowMover);
 
 		if (_isInstansiate)
 		{
@@ -117,6 +118,7 @@ public class EditMover : MonoBehaviour
             if (_isDelAllowMover)
             {
 				_isDelAllowMover = false;
+				//Debug.Log("why");
 				Destroy(gameObject);
 			}
 

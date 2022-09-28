@@ -32,9 +32,12 @@ public class GetObject : MonoBehaviour
         {
             LeftClickFunction();
         }
+        //Debug.Log(getEditMover);
+        
         // When the mover is selected and the HUD button is pressed.
         if (getEditMover != null) //Mover was clicked
         {
+            //Debug.Log(this._isMoverDelAllow);
             if (_isMoverDelAllow)// HUD Del pressed By MoverBtnCtrl.cs
             {
                 getEditMover.IsDelAllowMover = true;
@@ -65,6 +68,10 @@ public class GetObject : MonoBehaviour
         if (Physics.Raycast(ray, out hit))  //マウスのポジションからRayを投げて何かに当たったらhitに入れる
         {
 
+            if (hit.collider.gameObject.name!="Plane")
+            {
+
+            
 
             // 目標物以外をクリックした場合エラースロー
             try
@@ -76,7 +83,7 @@ public class GetObject : MonoBehaviour
                     getEditMover = hitObject.GetComponent<EditMover>();
                     getEditMover.IsMoveAllow = true;
                 }
-                else if (hitObject.name == hit.collider.gameObject.name)
+                else if (hitObject.transform.position == hit.collider.gameObject.transform.position)
                 {
                     getEditMover.IsMoveAllow = false;
                     getEditMover = null;
@@ -100,7 +107,7 @@ public class GetObject : MonoBehaviour
                 }
             }
 
-            
+            }
 
         }
     }
