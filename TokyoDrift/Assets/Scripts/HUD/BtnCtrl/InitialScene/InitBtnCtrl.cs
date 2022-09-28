@@ -11,6 +11,11 @@ public class InitBtnCtrl : MonoBehaviour
         SceneManager.LoadScene("SimScene");
     }
 
+    public void ChangeEditScene()
+    {
+        SceneManager.LoadScene("EditScene");
+    }
+
     public void ButtonExit()
     {
         Application.Quit();

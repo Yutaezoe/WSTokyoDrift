@@ -12,6 +12,7 @@ namespace Common
     {
         public int[] moverUid;
         public Vector3[] moverVector;
+        public Vector3[] targetVector;
 
     }
 
@@ -22,14 +23,19 @@ namespace Common
         const string SAVE_FILE_PATH = "save.json";
 
 
-        public static void SaveVector(Vector3[] _moverVector)
+        public static void SaveMoverVector(Vector3[] _moverVector)
         {
             saveData.moverVector = _moverVector;
             Save();
         }
 
+        public static void SaveTargetVector(Vector3[] _targetVector)
+        {
+            saveData.targetVector = _targetVector;
+            Save();
+        }
 
-        public static void SaveDeck(int[] _moverUid)
+        public static void SaveMoverUID(int[] _moverUid)
         {
             saveData.moverUid = _moverUid;
             Save();
