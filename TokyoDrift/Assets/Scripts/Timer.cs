@@ -12,7 +12,7 @@ public class Timer : MonoBehaviour
 	//　前のUpdateの時の秒数
 	private float oldSeconds;
 	//　タイマー表示用テキスト
-	private string timerText;
+	private string timerText="00:00";
 	bool timerStatus = false;
 
 	void Start()
