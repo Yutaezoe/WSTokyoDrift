@@ -220,10 +220,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1483927913}
     m_Modifications:
-    - target: {fileID: 4078366535557203042, guid: f546756a58d85cd438b8824919c49345, type: 3}
-      propertyPath: m_Size.y
-      value: 3.2
-      objectReference: {fileID: 0}
     - target: {fileID: 4078366535557203043, guid: f546756a58d85cd438b8824919c49345, type: 3}
       propertyPath: m_Name
       value: EditBus
@@ -1179,30 +1175,11 @@ MonoBehaviour:
   pointA: {fileID: 92759525}
   pointB: {fileID: 787459400}
   lineWeight: 1
---- !u!1 &1978547140 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4078366535557203043, guid: f546756a58d85cd438b8824919c49345, type: 3}
-  m_PrefabInstance: {fileID: 473782240}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1978547141 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4078366535557203055, guid: f546756a58d85cd438b8824919c49345, type: 3}
   m_PrefabInstance: {fileID: 473782240}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1978547142
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1978547140}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40bc17f31cb9bdf49b4cdf06edbab07b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
-  originalColor: {fileID: 2100000, guid: 0c92f824499a37b429d8e78cfa786e9b, type: 2}
 --- !u!1 &1984862915 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4924887251415357669, guid: 4ec1830685cf76e4a8e63ff37ab39b5e, type: 3}
@@ -1244,6 +1221,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 488013021837443308, guid: 8446df286401872409b78c94520f4630, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 488013021837443308, guid: 8446df286401872409b78c94520f4630, type: 3}
       propertyPath: lineMaster
       value: 
@@ -1314,6 +1295,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2809610956795903629, guid: 8446df286401872409b78c94520f4630, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7547211480939762933, guid: 8446df286401872409b78c94520f4630, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1423,6 +1408,14 @@ PrefabInstance:
       propertyPath: getObjectGO
       value: 
       objectReference: {fileID: 1516786964}
+    - target: {fileID: 3681174012441915058, guid: 4ec1830685cf76e4a8e63ff37ab39b5e, type: 3}
+      propertyPath: editBusMaster
+      value: 
+      objectReference: {fileID: 1483927913}
+    - target: {fileID: 3681174012441915058, guid: 4ec1830685cf76e4a8e63ff37ab39b5e, type: 3}
+      propertyPath: editBusPrefab
+      value: 
+      objectReference: {fileID: 4078366535557203043, guid: f546756a58d85cd438b8824919c49345, type: 3}
     - target: {fileID: 4924887251415357665, guid: 4ec1830685cf76e4a8e63ff37ab39b5e, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1510,6 +1503,38 @@ PrefabInstance:
     - target: {fileID: 4924887251415357669, guid: 4ec1830685cf76e4a8e63ff37ab39b5e, type: 3}
       propertyPath: m_Name
       value: MoverEditHud
+      objectReference: {fileID: 0}
+    - target: {fileID: 4924887251415357669, guid: 4ec1830685cf76e4a8e63ff37ab39b5e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767749272357738259, guid: 4ec1830685cf76e4a8e63ff37ab39b5e, type: 3}
+      propertyPath: eventDown.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767749272357738259, guid: 4ec1830685cf76e4a8e63ff37ab39b5e, type: 3}
+      propertyPath: eventDown.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767749272357738259, guid: 4ec1830685cf76e4a8e63ff37ab39b5e, type: 3}
+      propertyPath: eventDown.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1984862920}
+    - target: {fileID: 5767749272357738259, guid: 4ec1830685cf76e4a8e63ff37ab39b5e, type: 3}
+      propertyPath: eventDown.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767749272357738259, guid: 4ec1830685cf76e4a8e63ff37ab39b5e, type: 3}
+      propertyPath: eventDown.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ClickMoverAdd
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767749272357738259, guid: 4ec1830685cf76e4a8e63ff37ab39b5e, type: 3}
+      propertyPath: eventDown.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MoverBtnCtrl, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767749272357738259, guid: 4ec1830685cf76e4a8e63ff37ab39b5e, type: 3}
+      propertyPath: eventDown.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ec1830685cf76e4a8e63ff37ab39b5e, type: 3}
@@ -2015,7 +2040,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9003208623135833673, guid: c8582bdb72d84d24fb77b33676f1c4bf, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9003208623135833717, guid: c8582bdb72d84d24fb77b33676f1c4bf, type: 3}
       propertyPath: m_Pivot.x

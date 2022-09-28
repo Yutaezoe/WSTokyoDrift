@@ -13,15 +13,17 @@ public class GetObject : MonoBehaviour
     private GameObject hitObject;
     private EditMover getEditMover;
 
-    private bool _isDelAllow;
+    private bool _isMoverEditMode;
+    
+    
+    private bool _isMoverDelAllow;
 
-    public bool IsDelAllow
-    {
-        set
-        {
-            this._isDelAllow = value;
-        }
-    }
+
+
+
+    public bool IsMoverEditMode{set{this._isMoverEditMode = value;}}
+
+    public bool IsMoverDelAllow{set{this._isMoverDelAllow = value;}}
 
 
     void Update()
@@ -30,20 +32,25 @@ public class GetObject : MonoBehaviour
         {
             LeftClickFunction();
         }
-
-        if (getEditMover != null)
+        // When the mover is selected and the HUD button is pressed.
+        if (getEditMover != null) //Mover was clicked
         {
-            if (_isDelAllow)
+            if (_isMoverDelAllow)// HUD Del pressed By MoverBtnCtrl.cs
             {
                 getEditMover.IsDelAllowMover = true;
-                _isDelAllow = false;
+                _isMoverDelAllow = false;
             }
         }
         else
         {
-            _isDelAllow = false;
+            _isMoverDelAllow = false;
         }
 
+        if (_isMoverEditMode == false & getEditMover != null)
+        {
+            getEditMover.IsMoveAllow = false;
+            getEditMover = null;
+        }
 
     }
 
@@ -92,6 +99,11 @@ public class GetObject : MonoBehaviour
                     getEditMover = null;
                 }
             }
+
+            
+
         }
     }
+
+
 }

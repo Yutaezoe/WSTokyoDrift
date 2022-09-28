@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Common;
 
 public class EditMover : MonoBehaviour
 {
@@ -9,6 +10,9 @@ public class EditMover : MonoBehaviour
 
 	[SerializeField]
 	private Material originalColor;
+
+
+	private GameObject childGameObject;
 
 
 	private bool _isMoveAllow = false;
@@ -44,10 +48,26 @@ public class EditMover : MonoBehaviour
 		}
 	}
 
+    private void Start()
+    {
 
+		Transform[] childTrans;
+		childTrans = ComFunctions.GetChildren(gameObject.transform);
 
-	// Update is called once per frame
-	void Update()
+		foreach(Transform child in childTrans)
+        {
+            if (child.gameObject.name == "Head")
+            {
+				childGameObject = child.gameObject;
+			}
+		}
+
+		
+
+	}
+
+    // Update is called once per frame
+    void Update()
 	{
 
 
@@ -57,7 +77,7 @@ public class EditMover : MonoBehaviour
 		if (_isInstansiate)
 		{
 			vecX = Random.Range(0f, 10.0f);
-			Instantiate(gameObject, new Vector3(-8, vecX, 0), Quaternion.identity);
+			Instantiate(gameObject, new Vector3(0, 0.25f, 0), Quaternion.identity);
 			this._isInstansiate = false;
 
 		}
@@ -73,6 +93,8 @@ public class EditMover : MonoBehaviour
 		{
 
 			GetComponent<Renderer>().material.color = Color.blue;
+
+			childGameObject.GetComponent<Renderer>().material.color = Color.blue;
 
 			if (Input.GetKey("up"))
 			{
@@ -103,6 +125,7 @@ public class EditMover : MonoBehaviour
 		else
 		{
 			GetComponent<Renderer>().material.color = originalColor.color;
+			childGameObject.GetComponent<Renderer>().material.color = originalColor.color;
 		}
 
 	}
