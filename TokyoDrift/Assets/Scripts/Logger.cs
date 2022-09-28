@@ -22,7 +22,7 @@ public class Logger : MonoBehaviour
     List<int> moverTargetID = new List<int>();
     List<int> moverMoverID = new List<int>();
     List<DateTime> moverTime = new List<DateTime>();
-
+    //state relative path
     static string path = Directory.GetCurrentDirectory();
 
     private bool loggerStatus = true;
@@ -70,7 +70,9 @@ public class Logger : MonoBehaviour
 
 
                 //write to csvfile
-                StreamWriter file = new StreamWriter(@"C:\Users\13074\Desktop\newWorkspace\WSTokyoDrift\TokyoDrift\Assets\CSV\result.csv", true, Encoding.UTF8);
+
+                StreamWriter file = new StreamWriter(path+@"\Assets\Python\csv\result.csv", true, Encoding.UTF8);
+
                 file.WriteLine(string.Format("{0},{1},{2}", moverMoverID[count], moverTargetID[count], moverTime[count]));
                 file.Close();
 

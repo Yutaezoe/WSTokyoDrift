@@ -43,6 +43,7 @@ public class Manager : MonoBehaviour
     private int countTarget;
     private int countKickOfdistancePassive ;
 
+    //state relative path
     static string path = Directory.GetCurrentDirectory();
 
     private string pyExePath = path + @"\Assets\Python\sample_select_04.exe";
