@@ -108,22 +108,9 @@ public class Mover : MonoBehaviour
     }
 
     // Update is called once per frame
-<<<<<<< HEAD
-    // Update Area is ƒlƒXƒg[‚ß’ˆÓ
-||||||| 1559462
-    // ƒlƒXƒg[‚ß’ˆÓ
-=======
-    // ï¿½lï¿½Xï¿½gï¿½[ï¿½ß’ï¿½ï¿½ï¿½
->>>>>>> PreProduction
+    // Update Area is ï¿½lï¿½Xï¿½gï¿½[ï¿½ß’ï¿½ï¿½ï¿½
     void Update()
     {
-<<<<<<< HEAD
-        //Goal‚É“’B‚µ‚½ê‡‚ÍTrigger‚ğTrue‚É‚µAreturn‚ğ•Ô‚·
-||||||| 1559462
-        //Goal‚É“’B‚µ‚½ê‡‚Íreturn‚ğ•Ô‚·
-=======
-        //Goalï¿½É“ï¿½ï¿½Bï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½ï¿½returnï¿½ï¿½Ô‚ï¿½
->>>>>>> PreProduction
         float distanceFromGoal = Vector3.Distance(transform.position, goalPosition);
         if (distanceFromGoal < 0.2f && targetChildren.Length == 1)
         {
@@ -146,36 +133,17 @@ public class Mover : MonoBehaviour
                 return;
             }
             else
-<<<<<<< HEAD
+
             {//2
-                //Mover‚ªManager‚Éˆê“x‚àƒAƒTƒCƒ“‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î“ü‚é
-||||||| 1559462
-            {
-                //Mover‚ªManager‚Éˆê“x‚àƒAƒTƒCƒ“‚³‚ê‚Ä‚¢‚È‚¯‚ê‚Î“ü‚é
-=======
-            {
                 //Moverï¿½ï¿½Managerï¿½Éˆï¿½xï¿½ï¿½ï¿½Aï¿½Tï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½È‚ï¿½ï¿½ï¿½Î“ï¿½ï¿½ï¿½
->>>>>>> PreProduction
                 if (!IsAsignWait)
                 {
                     //Managerï¿½ï¿½ï¿½Åï¿½ï¿½gï¿½ï¿½ï¿½Aï¿½Tï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N
                     AssignWait();
                 }
                 else
-<<<<<<< HEAD
                 {//3
-                    //íAcƒ^[ƒQƒbƒg‚ğŠm”F
-||||||| 1559462
-                {
-                    //íAcƒ^[ƒQƒbƒg‚ğŠm”F
-=======
-                {
-                    //ï¿½íï¿½Aï¿½cï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½ï¿½ï¿½mï¿½F
->>>>>>> PreProduction
                     SettingComponent();
-
-                    //ï¿½Ú“Iï¿½n(_nextUID)ï¿½É‚ï¿½ï¿½Ç‚è’…ï¿½ï¿½ï¿½Ü‚ï¿½MoveMobilityï¿½ï¿½ï¿½Jï¿½ï¿½Ô‚ï¿½
-                    //ï¿½ï¿½ï¿½Bï¿½ï¿½ADecesionTargetï¿½É‚Äï¿½ï¿½Ì–Ú“Iï¿½nï¿½ï¿½İ’è‚µï¿½Aï¿½ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½{
                     if (nodeCounter != nodePoints.Length)
                     {
                         ModifyVelocity();
@@ -475,15 +443,7 @@ public class Mover : MonoBehaviour
     //Sako
     private void DecesionTarget()
     {
-<<<<<<< HEAD
-        //ƒ_ƒCƒNƒXƒgƒ‰‚ÌƒvƒŠŒvZ
-||||||| 1559462
 
-        //ƒ_ƒCƒNƒXƒgƒ‰‚ÌƒvƒŠŒvZ
-=======
-
-        //ï¿½_ï¿½Cï¿½Nï¿½Xï¿½gï¿½ï¿½ï¿½Ìƒvï¿½ï¿½ï¿½vï¿½Z
->>>>>>> PreProduction
         CalcDikstra(startUID, _nextUID);
 
         //ï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½Ì’ï¿½ï¿½ï¿½ï¿½ï¿½Å’Zï¿½oï¿½Hï¿½Ì‚ï¿½ï¿½Ì‚ğ’Šo
@@ -495,16 +455,8 @@ public class Mover : MonoBehaviour
         {
             statusTemp = ComFunctions.GetChildrenComponent<Target>(setTarget).StatusOfPikking;
 
-<<<<<<< HEAD
-            //cƒ^[ƒQƒbƒg‚ª2ŒÂˆÈã‚ÅgoalUID‚ÍŒó•â‚©‚çœŠO
-            if (targetNearNodeId[stanum] == goalUID )//&& targetChildren.Length != 1//)
-||||||| 1559462
-            //cƒ^[ƒQƒbƒg‚ª2ŒÂˆÈã‚ÅgoalUID‚ÍŒó•â‚©‚çœŠO
+
             if (targetNearNodeId[stanum] == goalUID && targetChildren.Length != 1)
-=======
-            //ï¿½cï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½ï¿½2ï¿½ÂˆÈï¿½ï¿½goalUIDï¿½ÍŒï¿½â‚©ï¿½çœï¿½O
-            if (targetNearNodeId[stanum] == goalUID && targetChildren.Length != 1)
->>>>>>> PreProduction
             {
                 stanum++;
                 continue;
@@ -515,7 +467,6 @@ public class Mover : MonoBehaviour
                 continue;
             }
 
-            //ï¿½Å‚ï¿½ï¿½Rï¿½Xï¿½gï¿½Ì’á‚¢Targetï¿½ğ’Šo
             if (costReturn[stanum] < costRetrunTemp)
             {
                 costRetrunTemp = costReturn[stanum];
@@ -525,7 +476,7 @@ public class Mover : MonoBehaviour
             stanum++;
         }
 
-        //‘_‚¢‚Ìƒ^[ƒQƒbƒg‚Ìó‘Ô•ÏXA•ÏX‚Å‚«‚éƒ^[ƒQƒbƒg‚È‚¢ê‡‚ÍƒS[ƒ‹‚Ö
+        //ï¿½_ï¿½ï¿½ï¿½Ìƒ^ï¿½[ï¿½Qï¿½bï¿½gï¿½Ìï¿½Ô•ÏXï¿½Aï¿½ÏXï¿½Å‚ï¿½ï¿½ï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½È‚ï¿½ï¿½ê‡ï¿½ÍƒSï¿½[ï¿½ï¿½ï¿½ï¿½
         if (targetNearNodeId[numIndex] != goalUID)
         {
             Debug.Log(" TargetNode " + targetNearNodeId[numIndex]);
@@ -538,7 +489,6 @@ public class Mover : MonoBehaviour
 
         Debug.Log($"Mover {_MoveID} : next {_nextUID}");
 
-        //ï¿½ï¿½ï¿½Ìƒ^ï¿½[ï¿½Qï¿½bï¿½gï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½Ü‚Å‚ÌÅ’Zï¿½oï¿½Hï¿½æ“¾
         CalcDikstra(startUID, _nextUID);
     }
 
