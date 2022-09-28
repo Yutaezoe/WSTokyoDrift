@@ -119,6 +119,7 @@ public class Mover : MonoBehaviour
     }
 
     // Update is called once per frame
+    // ネスト深め注意
     void Update()
     {
         //Goalに到達した場合はreturnを返す
@@ -150,23 +151,25 @@ public class Mover : MonoBehaviour
                     //Manager側で自身がアサインされたかチェック
                     AssignWait();
                 }
-
-                //常時、残ターゲットを確認
-                SettingComponent();
-
-                //目的地(_nextUID)にたどり着くまでMoveMobilityを繰り返す
-                //到達後、DecesionTargetにて次の目的地を設定し、上記を実施
-                if (nodeCounter != nodePoints.Length)
-                {
-                    ModifyVelocity();
-                    MoveMobility();
-                }
                 else
                 {
-                    nodeCounter = 0;
-                    startUID = _nextUID;
-                    DecesionTarget();
-                    RouteSetting();
+                    //常時、残ターゲットを確認
+                    SettingComponent();
+
+                    //目的地(_nextUID)にたどり着くまでMoveMobilityを繰り返す
+                    //到達後、DecesionTargetにて次の目的地を設定し、上記を実施
+                    if (nodeCounter != nodePoints.Length)
+                    {
+                        ModifyVelocity();
+                        MoveMobility();
+                    }
+                    else
+                    {
+                        nodeCounter = 0;
+                        startUID = _nextUID;
+                        DecesionTarget();
+                        RouteSetting();
+                    }
                 }
             }
         }
