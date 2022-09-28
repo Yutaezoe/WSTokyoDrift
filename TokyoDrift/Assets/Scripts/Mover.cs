@@ -152,6 +152,7 @@ public class Mover : MonoBehaviour
                     if (nodeCounter != nodePoints.Length)
                     {
                         ModifyVelocity();
+                        RotateFunction();
                         MoveMobility();
                     }
                     else
@@ -275,36 +276,6 @@ public class Mover : MonoBehaviour
                 startUID = ComFunctions.GetChildrenComponent<Node>(setNode).getNodeUID;
             }
         }
-
-        //foreach (Vector3 setFromNodeVector in lineFromNodeVector)
-        //{
-        //    distance = Vector3.Distance(setFromNodeVector, transform.position);
-
-        //    if (minDistanceFromStart > distance)
-        //    {
-        //        minDistanceFromStart = distance;
-        //        startUID = lineFromNodeUID[sta];
-        //    }
-        //    sta++;
-        //}
-
-        //sta = 0;
-
-        //foreach (Vector3 setToNodeVector in lineFromNodeVector)
-        //{
-        //    distance = Vector3.Distance(setToNodeVector, transform.position);
-
-        //    if (minDistanceFromStart > distance)
-        //    {
-        //        minDistanceFromStart = distance;
-        //        startUID = lineFromNodeUID[sta];
-        //    }
-        //    sta++;
-        //}
-
-
-
-        //startUID = startNodePoint.GetComponent<Node>().getNodeUID;
 
         foreach (Transform goalTarget in targetChildren)
         {
@@ -572,6 +543,25 @@ public class Mover : MonoBehaviour
             RouteSetting();
             IsAsignWait = true;
         }
+    }
+
+    private void RotateFunction()
+    {
+        Vector3 movement = new Vector3(nodePoints[nodeCounter].x, 0, nodePoints[nodeCounter].z).normalized;
+
+        if (movement == Vector3.zero)
+        {
+            return;
+        }
+
+        Quaternion targetRotation = Quaternion.LookRotation(movement);
+
+        targetRotation = Quaternion.RotateTowards(
+            transform.rotation,
+            targetRotation,
+            360 *100);
+
+        gameObject.transform.rotation = targetRotation;
     }
 
     #endregion
