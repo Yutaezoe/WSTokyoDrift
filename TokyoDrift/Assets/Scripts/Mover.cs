@@ -115,6 +115,11 @@ public class Mover : MonoBehaviour
         if (distanceFromGoal < 0.2f && targetChildren.Length == 1)
         {
             _IsGaolTrigger = true;
+
+            //Eliminate the mover in a simulated manner
+            Vector3 reScale = gameObject.transform.localScale;
+            reScale *=  0.01f;
+            gameObject.transform.localScale = reScale;
             return;
         }
         else
@@ -147,6 +152,7 @@ public class Mover : MonoBehaviour
                     if (nodeCounter != nodePoints.Length)
                     {
                         ModifyVelocity();
+                        RotateFunction();
                         MoveMobility();
                     }
                     else
@@ -258,40 +264,18 @@ public class Mover : MonoBehaviour
     {
 
         //StartSet
-        int sta = 0;
         float minDistanceFromStart = float.MaxValue;
         float distance;
 
-
-        foreach (Vector3 setFromNodeVector in lineFromNodeVector)
+        foreach(Transform setNode in nodeChildren)
         {
-            distance = Vector3.Distance(setFromNodeVector, transform.position);
-
-            if (minDistanceFromStart > distance)
+            distance = Vector3.Distance(transform.position,setNode.position);
+            if(distance < minDistanceFromStart)
             {
                 minDistanceFromStart = distance;
-                startUID = lineFromNodeUID[sta];
+                startUID = ComFunctions.GetChildrenComponent<Node>(setNode).getNodeUID;
             }
-            sta++;
         }
-
-        sta = 0;
-
-        foreach (Vector3 setToNodeVector in lineFromNodeVector)
-        {
-            distance = Vector3.Distance(setToNodeVector, transform.position);
-
-            if (minDistanceFromStart > distance)
-            {
-                minDistanceFromStart = distance;
-                startUID = lineFromNodeUID[sta];
-            }
-            sta++;
-        }
-
-       
-
-        //startUID = startNodePoint.GetComponent<Node>().getNodeUID;
 
         foreach (Transform goalTarget in targetChildren)
         {
@@ -386,19 +370,34 @@ public class Mover : MonoBehaviour
     {
         List<Vector3> nodeTrans = new ();
 
+        //for (int t = 0; t < routeReturn.Length; t++)
+        //{
+        //    foreach (int setNode in lineToNodeUID)
+        //    {
+        //        if (lineFromNodeUID[setNode] == routeReturn[t])
+        //        {
+        //            nodeTrans.Add(lineFromNodeVector[setNode]);
+        //        } 
+        //        else if (lineToNodeUID[setNode] == routeReturn[t])
+        //        {
+        //            nodeTrans.Add(lineToNodeVector[setNode]);
+        //        }
+        //    }
+        //    nodePoints = nodeTrans.ToArray();
+        //}
+
         for (int t = 0; t < routeReturn.Length; t++)
         {
-            foreach (int setNode in lineToNodeUID)
+            foreach (Transform setNode in nodeChildren)
             {
-                if (lineFromNodeUID[setNode] == routeReturn[t])
+                int tempNodeID = ComFunctions.GetChildrenComponent<Node>(setNode).getNodeUID;
+
+                if (tempNodeID == routeReturn[t])
                 {
-                    nodeTrans.Add(lineFromNodeVector[setNode]);
-                } 
-                else if (lineToNodeUID[setNode] == routeReturn[t])
-                {
-                    nodeTrans.Add(lineToNodeVector[setNode]);
+                    nodeTrans.Add(setNode.position);
                 }
             }
+
             nodePoints = nodeTrans.ToArray();
         }
 
@@ -544,6 +543,25 @@ public class Mover : MonoBehaviour
             RouteSetting();
             IsAsignWait = true;
         }
+    }
+
+    private void RotateFunction()
+    {
+        Vector3 movement = new Vector3(nodePoints[nodeCounter].x, 0, nodePoints[nodeCounter].z).normalized;
+
+        if (movement == Vector3.zero)
+        {
+            return;
+        }
+
+        Quaternion targetRotation = Quaternion.LookRotation(movement);
+
+        targetRotation = Quaternion.RotateTowards(
+            transform.rotation,
+            targetRotation,
+            360 *100);
+
+        gameObject.transform.rotation = targetRotation;
     }
 
     #endregion
