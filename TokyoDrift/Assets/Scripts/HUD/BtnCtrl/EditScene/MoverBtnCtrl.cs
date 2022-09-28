@@ -51,7 +51,7 @@ public class MoverBtnCtrl : MonoBehaviour
             listVector3.Add(child.position);
         }
 
-        SaveManager.SaveVector(listVector3.ToArray());
+        SaveManager.SaveMoverVector(listVector3.ToArray());
 
     }
 
