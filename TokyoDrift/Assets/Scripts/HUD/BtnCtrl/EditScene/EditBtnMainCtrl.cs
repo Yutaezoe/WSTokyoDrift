@@ -16,6 +16,15 @@ public class EditBtnMainCtrl : MonoBehaviour
     [SerializeField, Header("Set Mover HUD")]
     private GameObject MoverHUD;
 
+
+    private MoverBtnCtrl moverBtnCtrl;
+
+    private void Start()
+    {
+        moverBtnCtrl = MoverHUD.GetComponent<MoverBtnCtrl>();
+    }
+
+
     public async void ClickNodeEdit()
     {
 
@@ -43,6 +52,9 @@ public class EditBtnMainCtrl : MonoBehaviour
 
         gameObject.SetActive(false);
         MoverHUD.SetActive(true);
+        moverBtnCtrl.IsMoverHUDActive = true;
+
+
 
     }
 
