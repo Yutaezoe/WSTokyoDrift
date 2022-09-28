@@ -36316,6 +36316,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 6022619480566393632, guid: ea5abada46fbeaa44bc873525f1b146e, type: 3}
+      propertyPath: HUD
+      value: 
+      objectReference: {fileID: 2144250074}
+    - target: {fileID: 6022619480566393632, guid: ea5abada46fbeaa44bc873525f1b146e, type: 3}
+      propertyPath: timer
+      value: 
+      objectReference: {fileID: 446453166}
+    - target: {fileID: 6022619480566393632, guid: ea5abada46fbeaa44bc873525f1b146e, type: 3}
       propertyPath: moverMaster
       value: 
       objectReference: {fileID: 1165224166}
@@ -39707,6 +39715,11 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!1 &2144250074 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1212858319407646800, guid: 51583785777e944478b7d7e49326b9e4, type: 3}
+  m_PrefabInstance: {fileID: 589304236}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2809610956546693692
 PrefabInstance:
   m_ObjectHideFlags: 0
