@@ -28,6 +28,8 @@ public class Logger : MonoBehaviour
     List<DateTime> moverTime = new List<DateTime>();
     List<string> moverTimeCount = new List<string>();
     List<int> remainingCount = new List<int>();
+    List<bool> goalStatus = new List<bool>();
+
 
 
     //state relative path
@@ -75,10 +77,11 @@ public class Logger : MonoBehaviour
                     moverTime.Add(DateTime.Now);
                     moverTimeCount.Add(timercompo.GetTimerCount);
                     remainingCount.Add(HUDcompo.PropetyRemaining);
+                    goalStatus.Add(moverComponent.PropertyGoalTrigger);
 
                     StreamWriter file = new StreamWriter(path + @"\Assets\Python\csv\result.csv", true, Encoding.UTF8);
 
-                    file.WriteLine(string.Format("{0},{1},{2},{3},{4}", moverMoverID[count], moverTargetID[count], moverTime[count], moverTimeCount[count], remainingCount[count]));
+                    file.WriteLine(string.Format("{0},{1},{2},{3},{4},{5}", moverMoverID[count], moverTargetID[count], moverTime[count], moverTimeCount[count], remainingCount[count],goalStatus[count]));
                     file.Close();
                     count += 1;
                 }
