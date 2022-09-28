@@ -22,6 +22,7 @@ public class Mover : MonoBehaviour
     // Goal Position
     private int _nextUID;
     private int goalUID;
+    private bool _IsGaolTrigger = false;
 
     // Target Lists
     [SerializeField]
@@ -78,6 +79,8 @@ public class Mover : MonoBehaviour
     public int PropertyMoveID { get { return _MoveID; } }
     public int PropertyTargettingPoint { get { return _nextUID; }}
     public int[] PropertyTargetID { get { return _TargetID; } set { this._TargetID = value; } }
+
+    public bool PropertyGoalTrigger { get { return _IsGaolTrigger; } }
     #endregion
 
     private void Awake()
@@ -102,34 +105,20 @@ public class Mover : MonoBehaviour
         //Ezoe
         //�}�l�[�W���[�֑���p�̏����_�C�N�X�g���Ōv�Z
         CalcDikstra(startUID, _nextUID);
-
-        List<Target.TargetStatus> targetStatus = new();
-
-        foreach (Transform setTarget in targetChildren)
-        {
-            targetComponent = ComFunctions.GetChildrenComponent<Target>(setTarget);
-            targetStatus.Add(targetComponent.StatusOfPikking);
-        }
-        pickStatus = targetStatus.ToArray();
-
-        for (int i = 0; i < pickStatus.Length; i++)
-        {
-            Debug.Log(pickStatus[i]);
-        }
     }
 
     // Update is called once per frame
-    // �l�X�g�[�ߒ���
+    // Update Area is �l�X�g�[�ߒ���
     void Update()
     {
-        //Goal�ɓ��B�����ꍇ��return��Ԃ�
         float distanceFromGoal = Vector3.Distance(transform.position, goalPosition);
         if (distanceFromGoal < 0.2f && targetChildren.Length == 1)
         {
+            _IsGaolTrigger = true;
             return;
         }
         else
-        {
+        {//1
             if (!IsCalledDistance)
             {
                 //Sako
@@ -144,7 +133,8 @@ public class Mover : MonoBehaviour
                 return;
             }
             else
-            {
+
+            {//2
                 //Mover��Manager�Ɉ�x���A�T�C������Ă��Ȃ���Γ���
                 if (!IsAsignWait)
                 {
@@ -152,12 +142,8 @@ public class Mover : MonoBehaviour
                     AssignWait();
                 }
                 else
-                {
-                    //�펞�A�c�^�[�Q�b�g���m�F
+                {//3
                     SettingComponent();
-
-                    //�ړI�n(_nextUID)�ɂ��ǂ蒅���܂�MoveMobility���J��Ԃ�
-                    //���B��ADecesionTarget�ɂĎ��̖ړI�n��ݒ肵�A��L�����{
                     if (nodeCounter != nodePoints.Length)
                     {
                         ModifyVelocity();
@@ -170,9 +156,9 @@ public class Mover : MonoBehaviour
                         DecesionTarget();
                         RouteSetting();
                     }
-                }
-            }
-        }
+                }//3
+            }//2
+        }//1
     }
 
     #region Mover's Methods
@@ -458,18 +444,18 @@ public class Mover : MonoBehaviour
     private void DecesionTarget()
     {
 
-        //�_�C�N�X�g���̃v���v�Z
         CalcDikstra(startUID, _nextUID);
 
         //�^�[�Q�b�g�̒�����ŒZ�o�H�̂��̂𒊏o
         int stanum = 0;
         long costRetrunTemp = long.MaxValue;
         Target.TargetStatus statusTemp;
+        int numIndex = 0;
         foreach (Transform setTarget in targetChildren)
         {
             statusTemp = ComFunctions.GetChildrenComponent<Target>(setTarget).StatusOfPikking;
 
-            //�c�^�[�Q�b�g��2�ȏ��goalUID�͌�₩�珜�O
+
             if (targetNearNodeId[stanum] == goalUID && targetChildren.Length != 1)
             {
                 stanum++;
@@ -481,39 +467,28 @@ public class Mover : MonoBehaviour
                 continue;
             }
 
-            //�ł��R�X�g�̒ႢTarget�𒊏o
             if (costReturn[stanum] < costRetrunTemp)
             {
                 costRetrunTemp = costReturn[stanum];
                 _nextUID = targetNearNodeId[stanum];
+                numIndex = stanum;
             }
             stanum++;
         }
-        //if (targetNearNodeId[stanum] != goalUID)
-        //{
-        //    Debug.Log(" TargetNode " + targetNearNodeId[stanum]);
-        //    targetComponent = ComFunctions.GetChildrenComponent<Target>(targetChildren[stanum]);
-        //    targetComponent.SetStatusOfPikkingCOMPLETED();
-        //}
-       
 
-        List<Target.TargetStatus> targetStatus = new();
-
-        foreach (Transform setTargetDebug in targetChildren)
+        //�_���̃^�[�Q�b�g�̏�ԕύX�A�ύX�ł���^�[�Q�b�g�Ȃ��ꍇ�̓S�[����
+        if (targetNearNodeId[numIndex] != goalUID)
         {
-            targetComponent = ComFunctions.GetChildrenComponent<Target>(setTargetDebug);
-            targetStatus.Add(targetComponent.StatusOfPikking);
+            Debug.Log(" TargetNode " + targetNearNodeId[numIndex]);
+            targetComponent = ComFunctions.GetChildrenComponent<Target>(targetChildren[numIndex]);
+            targetComponent.SetStatusOfPikkingCOMPLETED();
+        }else
+        {
+            _nextUID = goalUID;
         }
-        pickStatus = targetStatus.ToArray();
-
-        //for (int i = 0; i < pickStatus.Length; i++)
-        //{
-        //    Debug.Log(pickStatus[i]);
-        //}
 
         Debug.Log($"Mover {_MoveID} : next {_nextUID}");
 
-        //���̃^�[�Q�b�g�^�[�Q�b�g�܂ł̍ŒZ�o�H�擾
         CalcDikstra(startUID, _nextUID);
     }
 
@@ -552,6 +527,18 @@ public class Mover : MonoBehaviour
         else
         {
             _nextUID = manageComponent.GetAssignTarget(_MoveID);
+
+            int temp = 0;
+            foreach (int v in targetNearNodeId)
+            {
+                if (v == _nextUID)
+                {
+                    targetComponent = ComFunctions.GetChildrenComponent<Target>(targetChildren[temp]);
+                    targetComponent.SetStatusOfPikkingCOMPLETED();
+                }
+                temp++;
+            }
+
             Debug.Log($"{_MoveID} : First Target {_nextUID} ");
             CalcDikstra(startUID, _nextUID);
             RouteSetting();
