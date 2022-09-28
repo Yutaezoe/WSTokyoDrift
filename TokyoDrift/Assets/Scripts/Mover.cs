@@ -71,6 +71,7 @@ public class Mover : MonoBehaviour
     private Vector3[] lineToNodeVector;
     private int[] targetNearNodeId;
     private bool IsCalledDistance = false;
+    private Vector3 goalPosition;
     #endregion
 
     #region Setting Property
@@ -102,13 +103,6 @@ public class Mover : MonoBehaviour
         //マネージャーへ送る用の情報をダイクストラで計算
         CalcDikstra(startUID, _nextUID);
 
-       // //Sako
-       // //マネージャーに各ターゲットへのデータ渡し
-       // Manager managercompo = manager.GetComponent<Manager>();
-       // SettingEachTargetDistance();
-
-       //// managercompo.distancePassive(_MoveID, _TargetID, eachTargetDistance);
-
         List<Target.TargetStatus> targetStatus = new();
 
         foreach (Transform setTarget in targetChildren)
@@ -127,43 +121,54 @@ public class Mover : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        if (!IsCalledDistance)
+        //Goalに到達した場合はreturnを返す
+        float distanceFromGoal = Vector3.Distance(transform.position, goalPosition);
+        if (distanceFromGoal < 0.2f　&& targetChildren.Length == 1)
         {
-            //Sako
-            //マネージャーに各ターゲットへのデータ渡し
-            Manager managercompo = manager.GetComponent<Manager>();
-            SettingEachTargetDistance();
-            bool complete= managercompo.distancePassive(_MoveID, _TargetID, eachTargetDistance);
-            if (complete == true)
-            {
-                IsCalledDistance = true;
-            }
             return;
-        }
-        //MoverがManagerに一度もアサインされていなければ入る
-        if (!IsAsignWait)
-        {
-            //Manager側で自身がアサインされたかチェック
-            AssignWait();
-        }
-
-        //目的地(_nextUID)にたどり着くまでMoveMobilityを繰り返す
-        //到達後、DecesionTargetにて次の目的地を設定し、上記を実施
-        if (nodeCounter != nodePoints.Length)
-        {
-            ModifyVelocity();
-            MoveMobility();
         }
         else
         {
-            nodeCounter = 0;
-            startUID = _nextUID;
+            if (!IsCalledDistance)
+            {
+                //Sako
+                //マネージャーに各ターゲットへのデータ渡し
+                Manager managercompo = manager.GetComponent<Manager>();
+                SettingEachTargetDistance();
+                bool complete = managercompo.distancePassive(_MoveID, _TargetID, eachTargetDistance);
+                if (complete == true)
+                {
+                    IsCalledDistance = true;
+                }
+                return;
+            }
+            else
+            {
+                //MoverがManagerに一度もアサインされていなければ入る
+                if (!IsAsignWait)
+                {
+                    //Manager側で自身がアサインされたかチェック
+                    AssignWait();
+                }
 
-            //常時、残ターゲットを確認
-            SettingComponent();
-            DecesionTarget();
-            RouteSetting();
+                //常時、残ターゲットを確認
+                SettingComponent();
+
+                //目的地(_nextUID)にたどり着くまでMoveMobilityを繰り返す
+                //到達後、DecesionTargetにて次の目的地を設定し、上記を実施
+                if (nodeCounter != nodePoints.Length)
+                {
+                    ModifyVelocity();
+                    MoveMobility();
+                }
+                else
+                {
+                    nodeCounter = 0;
+                    startUID = _nextUID;
+                    DecesionTarget();
+                    RouteSetting();
+                }
+            }
         }
     }
 
@@ -295,7 +300,7 @@ public class Mover : MonoBehaviour
             sta++;
         }
 
-        Debug.Log(startUID);
+       
 
         //startUID = startNodePoint.GetComponent<Node>().getNodeUID;
 
@@ -308,8 +313,11 @@ public class Mover : MonoBehaviour
             {
                 goalUID = targetNearNodeId[goalCheck.TargetUid];
                 _nextUID = goalUID;
+                goalPosition = goalCheck.NearNodeVector3;
             }
         }
+
+        Debug.Log(startUID + "" + goalUID+$"({goalPosition})");
     }
 
     //Sako
@@ -464,7 +472,7 @@ public class Mover : MonoBehaviour
                 stanum++;
                 continue;
             }
-            else if(statusTemp == Target.TargetStatus.COMPLETED)
+            else if (statusTemp == Target.TargetStatus.COMPLETED)
             {
                 stanum++;
                 continue;
@@ -478,20 +486,13 @@ public class Mover : MonoBehaviour
             }
             stanum++;
         }
-
-        Debug.Log("MoverID " + _MoveID);
-
-        for(int status = 0; status < targetNearNodeId.Length; status++)
-        {
-            foreach (Transform setTarget in targetChildren)
-            {
-                if (targetNearNodeId[status] == _nextUID && targetNearNodeId[status] != goalUID)
-                {
-                    targetComponent = ComFunctions.GetChildrenComponent<Target>(setTarget);
-                    targetComponent.SetStatusOfPikkingCOMPLETED();
-                }
-            }
-        }
+        //if (targetNearNodeId[stanum] != goalUID)
+        //{
+        //    Debug.Log(" TargetNode " + targetNearNodeId[stanum]);
+        //    targetComponent = ComFunctions.GetChildrenComponent<Target>(targetChildren[stanum]);
+        //    targetComponent.SetStatusOfPikkingCOMPLETED();
+        //}
+       
 
         List<Target.TargetStatus> targetStatus = new();
 
@@ -502,10 +503,12 @@ public class Mover : MonoBehaviour
         }
         pickStatus = targetStatus.ToArray();
 
-        for (int i = 0; i < pickStatus.Length; i++)
-        {
-            Debug.Log(pickStatus[i]);
-        }
+        //for (int i = 0; i < pickStatus.Length; i++)
+        //{
+        //    Debug.Log(pickStatus[i]);
+        //}
+
+        Debug.Log($"Mover {_MoveID} : next {_nextUID}");
 
         //次のターゲットターゲットまでの最短経路取得
         CalcDikstra(startUID, _nextUID);

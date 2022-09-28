@@ -428,6 +428,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &381777964 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2809610956795903628, guid: 8446df286401872409b78c94520f4630, type: 3}
+  m_PrefabInstance: {fileID: 451143688}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &392341870 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2809610956795903629, guid: 8446df286401872409b78c94520f4630, type: 3}
@@ -628,6 +633,10 @@ PrefabInstance:
       propertyPath: nodePoints.Array.data[1]
       value: 
       objectReference: {fileID: 1772378511}
+    - target: {fileID: 2809610954882233172, guid: 8446df286401872409b78c94520f4630, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 2809610956795903628, guid: 8446df286401872409b78c94520f4630, type: 3}
       propertyPath: m_Name
       value: BusMaster
@@ -675,6 +684,14 @@ PrefabInstance:
     - target: {fileID: 2809610956795903629, guid: 8446df286401872409b78c94520f4630, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6196907852592258527, guid: 8446df286401872409b78c94520f4630, type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6196907852592258527, guid: 8446df286401872409b78c94520f4630, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -7.15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8446df286401872409b78c94520f4630, type: 3}
@@ -1541,6 +1558,59 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 30, y: 0, z: 0}
+--- !u!1 &928146028
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 928146030}
+  - component: {fileID: 928146029}
+  m_Layer: 0
+  m_Name: Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &928146029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 928146028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0bad3d0e482e55c49ba5475936a54360, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  busMaster: {fileID: 381777964}
+  bus1: {fileID: 0}
+  bus2: {fileID: 0}
+  mainCamera: {fileID: 0}
+  target1: {fileID: 0}
+  target2: {fileID: 0}
+  logger: {fileID: 0}
+  timer: {fileID: 0}
+  targetMaster: {fileID: 0}
+--- !u!4 &928146030
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 928146028}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -5.394852, y: -11.493853, z: -0.30538505}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &939094941
 GameObject:
   m_ObjectHideFlags: 0
@@ -3108,7 +3178,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2321740877748237222, guid: f06e03b9fc05a484a99bdd813d2b013d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9
+      value: -7.2
       objectReference: {fileID: 0}
     - target: {fileID: 2321740877748237222, guid: f06e03b9fc05a484a99bdd813d2b013d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3395,9 +3465,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3bca407474af54b8484646c0d1183a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  manager: {fileID: 0}
   _MoveID: 0
-  startNodePoint: {fileID: 1772378510}
   targetMaster: {fileID: 2027145179}
+  baseSpeed: 2
   lineMaster: {fileID: 1996578128}
   nodeMaster: {fileID: 15489545}
 --- !u!1001 &1996578127
