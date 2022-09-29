@@ -21,7 +21,23 @@ public class EditTarget : MonoBehaviour
 	public bool IsDelAllowTarget	{ set{this._isDelAllowTarget = value;}}
 
 
-	private void Start()
+    private void Awake()
+    {
+		Vector3 loadVector3;
+		
+
+		SaveManager.Load();
+		
+		if (SaveManager.saveData.targetGoalVector != new Vector3(0,0,0) && gameObject.name== "EditTargetGoal")
+		{
+			loadVector3 = SaveManager.saveData.targetGoalVector;
+			transform.position = loadVector3;
+		}
+
+	}
+
+
+    private void Start()
 	{
 		Transform[] childTrans;
 		childTrans = ComFunctions.GetChildren(gameObject.transform);
@@ -47,10 +63,21 @@ public class EditTarget : MonoBehaviour
 		if (_isTargetAllow)
 		{
 
-			GetComponent<Renderer>().material.color = Color.red;
+			if (gameObject.name != "EditTargetGoal")
+			{
+				GetComponent<Renderer>().material.color = Color.red;
 
-			childGameObject.GetComponent<Renderer>().material.color = Color.red;
+				childGameObject.GetComponent<Renderer>().material.color = Color.red;
 
+            }
+            else
+            {
+				GetComponent<Renderer>().material.color = Color.green;
+
+				childGameObject.GetComponent<Renderer>().material.color = Color.green;
+			}
+
+				
 			if (Input.GetKey("up"))
 			{
 				transform.position += transform.forward * speed * Time.deltaTime;
@@ -68,7 +95,7 @@ public class EditTarget : MonoBehaviour
 				transform.position -= transform.right * speed * Time.deltaTime;
 			}
 
-			if (_isDelAllowTarget)
+			if (_isDelAllowTarget && gameObject.name != "EditTargetGoal")
 			{
 				_isDelAllowTarget = false;
 				//Debug.Log("why");
@@ -78,8 +105,11 @@ public class EditTarget : MonoBehaviour
 		}
 		else
 		{
-			GetComponent<Renderer>().material.color = originalColor.color;
-			childGameObject.GetComponent<Renderer>().material.color = originalColor.color;
+			
+				GetComponent<Renderer>().material.color = originalColor.color;
+				childGameObject.GetComponent<Renderer>().material.color = originalColor.color;
+			
+			
 		}
 
 	}

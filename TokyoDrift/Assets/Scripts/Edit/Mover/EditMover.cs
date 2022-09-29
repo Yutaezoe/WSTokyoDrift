@@ -16,11 +16,11 @@ public class EditMover : MonoBehaviour
 
 
 	private bool _isMoveAllow = false;
-	private bool _isInstansiate = false;
+	
 	private bool _isDelAllowMover = false;
 
 
-	private float vecX;
+	
 
 	public bool IsMoveAllow
 	{
@@ -40,13 +40,7 @@ public class EditMover : MonoBehaviour
 	}
 
 
-	public bool IsInstansiate
-	{
-		set
-		{
-			this._isInstansiate = value;
-		}
-	}
+
 
     private void Start()
     {
@@ -75,13 +69,7 @@ public class EditMover : MonoBehaviour
 
 		//Debug.Log(_isDelAllowMover);
 
-		if (_isInstansiate)
-		{
-			vecX = Random.Range(0f, 10.0f);
-			Instantiate(gameObject, new Vector3(0, 0.25f, 0), Quaternion.identity);
-			this._isInstansiate = false;
 
-		}
 
 	}
 
