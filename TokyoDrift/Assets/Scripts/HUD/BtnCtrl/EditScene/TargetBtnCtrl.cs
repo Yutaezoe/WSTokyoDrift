@@ -10,6 +10,7 @@ public class TargetBtnCtrl : MonoBehaviour
     [SerializeField, Header("Set Ray Object")] private GameObject getObjectGO;
     [SerializeField, Header("Set Edit Target Master")] private Transform editTargetMaster;
     [SerializeField, Header("Set Edit Target Prefab")] private GameObject editTargetPrefab;
+    [SerializeField, Header("Set Edit Target Prefab")] private Transform editGoalTargetPrefab;
 
     private GetObject getObject;
 
@@ -51,6 +52,10 @@ public class TargetBtnCtrl : MonoBehaviour
         }
 
         SaveManager.SaveTargetVector(listVector3.ToArray());
+
+
+        SaveManager.SaveGoalTargetVector(editGoalTargetPrefab.position);
+
 
     }
 

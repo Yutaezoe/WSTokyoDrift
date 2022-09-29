@@ -31,12 +31,20 @@ public class EndRollScript : MonoBehaviour
             if (transform.position.y <= limitPosition)
             {
                 transform.position = new Vector2(transform.position.x, transform.position.y + textScrollSpeed * Time.deltaTime);
+
             }
             else
             {
                 isStopEndRoll = true;
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            //StopCoroutine(endRollCoroutine);
+            SceneManager.LoadScene("InitialScene");
+        }
+
     }
 
     IEnumerator GoToNextScene()

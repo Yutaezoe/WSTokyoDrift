@@ -13,6 +13,7 @@ namespace Common
         public int[] moverUid;
         public Vector3[] moverVector;
         public Vector3[] targetVector;
+        public Vector3 targetGoalVector;
 
     }
 
@@ -38,6 +39,12 @@ namespace Common
         public static void SaveMoverUID(int[] _moverUid)
         {
             saveData.moverUid = _moverUid;
+            Save();
+        }
+
+        public static void SaveGoalTargetVector(Vector3 _targetGoalVector)
+        {
+            saveData.targetGoalVector = _targetGoalVector;
             Save();
         }
 

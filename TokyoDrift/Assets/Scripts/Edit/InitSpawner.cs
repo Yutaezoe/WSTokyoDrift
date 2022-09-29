@@ -10,6 +10,7 @@ public class InitSpawner : MonoBehaviour
     [SerializeField, Header("Set Edit Target Master")] private Transform editTargetMaster;
     [SerializeField, Header("Set Edit Target Prefab")] private GameObject editTargetPrefab;
 
+
     // Start is called before the first frame update
     void Awake()
     {
