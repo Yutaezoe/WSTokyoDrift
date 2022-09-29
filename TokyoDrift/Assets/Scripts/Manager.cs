@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using System.Linq;
 using static UnityEngine.GraphicsBuffer;
 using Common;
@@ -29,17 +30,18 @@ public class Manager : MonoBehaviour
 
     //kito added
     private Transform[] arrayMover;
+    private Transform[] goalCheckArrayMover;
     private Transform[] arrayTarget;
     private int countMover;
     private int countTarget;
     private int countKickOfdistancePassive ;
-
+    private GameObject[] goalCheckmover;
     //state relative path
     static string path = Directory.GetCurrentDirectory();
 
     private string pyExePath = path + @"\Assets\Python\sample_select_07.exe";
     private string pyCodePath = path + @"\Assets\Python\sample_select_07.py";
-
+    int countGoalMover = 0;
 
     //kito added 2
     bool assignComplete = false;
@@ -61,13 +63,20 @@ public class Manager : MonoBehaviour
         //confirm mover and Target's count
         confirmMoverTargetCount();
 
+        goalCheckArrayMover = ComFunctions.GetChildren(busMaster.transform);
+        goalCheckmover = new GameObject[goalCheckArrayMover.Length];
+        for (int i = 0; i < arrayMover.Length; i++)
+        {
+            goalCheckmover[i] = arrayMover[i].gameObject;
+        }
+
+
     }
     private void Update()
     {
         //added by kito
         //Check if Assign Buber is kicked by ALL Mover every frame
         countDistancePassiveKick();
-
     }
     public bool distancePassive(int moverID, int[] targetID, int[] distance)
     {
@@ -234,6 +243,40 @@ public class Manager : MonoBehaviour
             }
 
         }
+    }
+
+
+    public void CheckSimComplete()
+    {
+
+        for (int i = 0; i < goalCheckmover.Length; i++)
+        {
+            Mover moverComponent = goalCheckmover[i].GetComponent<Mover>();
+
+            if (moverComponent.PropertyGoalTrigger == true)
+            {
+                countGoalMover += 1;
+            }
+        }
+
+        if (countGoalMover >= arrayMover.Length)
+        {
+            //   SimComplete();
+            print("7777777777777777777777777777:" + countGoalMover);
+            SimComplete();
+        }
+    }
+
+    void SimComplete()
+    {
+
+        //Stop Logger 
+        var loggerCompo = logger.GetComponent<Logger>();
+        loggerCompo.StopLogger();
+
+        //Change scene
+        //SceneManager.LoadScene("");
+
     }
 
 }
