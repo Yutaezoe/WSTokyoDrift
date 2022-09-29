@@ -52,11 +52,21 @@ public class LineBetween : MonoBehaviour
 
         lineRenderer.startWidth = 0.1f;                   // 開始点の太さを0.1にする
         lineRenderer.endWidth = 0.1f;                     // 終了点の太さを0.1にする
+         
+            Color weightColor = new Color(0.5f, 0.5f, 0, 1);
+            float correctionFront = 0.5f - (float)lineWeight/10f;
+            float correctionEnd =  0.5f * (float)lineWeight/10f;
+            if (lineWeight <= 5)
+            {
+                weightColor = new Color(0.5f - correctionFront, 0.5f + correctionFront, 0, 1);
+            }else
+            {
+                weightColor = new Color((float)lineWeight/10f, 0, 0, 1);
+            }
+        lineRenderer.startColor = weightColor;
+        lineRenderer.endColor = weightColor;
 
-        lineRenderer.startColor = Color.Lerp(Color.red, Color.green, (float)lineWeight);
-        lineRenderer.endColor = Color.Lerp(Color.red, Color.green, (float)lineWeight);
 
-            
         }
     }
 
