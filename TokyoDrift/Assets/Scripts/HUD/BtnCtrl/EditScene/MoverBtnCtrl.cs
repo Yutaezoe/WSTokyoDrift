@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using Common;
 
 public class MoverBtnCtrl : MonoBehaviour
 {
-
     [SerializeField, Header("Set Edit HUD")] private GameObject editHUD;
     [SerializeField, Header("Set Ray Object")] private GameObject getObjectGO;
     [SerializeField, Header("Set Edit Bus Master")] private Transform editBusMaster;
@@ -13,9 +13,7 @@ public class MoverBtnCtrl : MonoBehaviour
 
     private GetObject getObject;
 
-
     private bool _isMoverHUDActive = false;
-
 
     public bool IsMoverHUDActive
         {
@@ -41,6 +39,24 @@ public class MoverBtnCtrl : MonoBehaviour
     }
 
 
+    public void ClickMoverSave()
+    {
+        List<Vector3> listVector3 = new ();
+        Transform[] childMover;
+        
+        childMover = ComFunctions.GetChildren(editBusMaster);
+
+        foreach(Transform child in childMover)
+        {
+            listVector3.Add(child.position);
+        }
+
+        SaveManager.SaveMoverVector(listVector3.ToArray());
+
+    }
+
+
+
     public void ClickMoverAdd()
     {
         GameObject childGameObject;
@@ -52,19 +68,16 @@ public class MoverBtnCtrl : MonoBehaviour
 
     public void ClickMoverDel()
     {
-        getObject.IsMoverDelAllow = true;
+        getObject.IsMoverDelAllow = true; 
     }
-
 
     public async void ClickBackEdit()
     {
-
         await Task.Delay(250);
 
         gameObject.SetActive(false);
         getObject.IsMoverEditMode  = false;
         editHUD.SetActive(true);
-
     }
 
 

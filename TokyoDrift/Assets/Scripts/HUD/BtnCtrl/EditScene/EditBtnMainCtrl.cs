@@ -18,10 +18,12 @@ public class EditBtnMainCtrl : MonoBehaviour
 
 
     private MoverBtnCtrl moverBtnCtrl;
+    private TargetBtnCtrl targetBtnCtrl;
 
     private void Start()
     {
         moverBtnCtrl = MoverHUD.GetComponent<MoverBtnCtrl>();
+        targetBtnCtrl = TargetHUD.GetComponent<TargetBtnCtrl>();
     }
 
 
@@ -65,6 +67,7 @@ public class EditBtnMainCtrl : MonoBehaviour
 
         gameObject.SetActive(false);
         TargetHUD.SetActive(true);
+        targetBtnCtrl.IsTargetHUDActive = true;
 
 
     }

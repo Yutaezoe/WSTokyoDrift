@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Common;
 
-public class EditMover : MonoBehaviour
+public class EditTarget : MonoBehaviour
 {
 	[SerializeField]
 	private float speed = 5.0f;
@@ -11,91 +11,45 @@ public class EditMover : MonoBehaviour
 	[SerializeField]
 	private Material originalColor;
 
-
 	private GameObject childGameObject;
 
+	private bool _isTargetAllow = false;
+	private bool _isDelAllowTarget = false;
 
-	private bool _isMoveAllow = false;
-	private bool _isInstansiate = false;
-	private bool _isDelAllowMover = false;
+	public bool IsTargetAllow	{set{this._isTargetAllow = value;}}
+
+	public bool IsDelAllowTarget	{ set{this._isDelAllowTarget = value;}}
 
 
-	private float vecX;
-
-	public bool IsMoveAllow
+	private void Start()
 	{
-		set
-		{
-			this._isMoveAllow = value;
-		}
-	}
-
-
-	public bool IsDelAllowMover
-	{
-		set
-		{
-			this._isDelAllowMover = value;
-		}
-	}
-
-
-	public bool IsInstansiate
-	{
-		set
-		{
-			this._isInstansiate = value;
-		}
-	}
-
-    private void Start()
-    {
-
 		Transform[] childTrans;
 		childTrans = ComFunctions.GetChildren(gameObject.transform);
 
-		foreach(Transform child in childTrans)
-        {
-            if (child.gameObject.name == "Head")
-            {
+		foreach (Transform child in childTrans)
+		{
+			if (child.gameObject.name == "Cube (1)")
+			{
 				childGameObject = child.gameObject;
 			}
 		}
-
-		
-
 	}
 
-    // Update is called once per frame
-    void Update()
+	// Update is called once per frame
+	void Update()
 	{
-
-
 		MovingObject();
-
-		//Debug.Log(_isDelAllowMover);
-
-		if (_isInstansiate)
-		{
-			vecX = Random.Range(0f, 10.0f);
-			Instantiate(gameObject, new Vector3(0, 0.25f, 0), Quaternion.identity);
-			this._isInstansiate = false;
-
-		}
-
 	}
-
-	
 
 	private void MovingObject()
 	{
 
-		if (_isMoveAllow)
+		if (_isTargetAllow)
 		{
 
-			GetComponent<Renderer>().material.color = Color.blue;
+			GetComponent<Renderer>().material.color = Color.red;
 
-			childGameObject.GetComponent<Renderer>().material.color = Color.blue;
+			childGameObject.GetComponent<Renderer>().material.color = Color.red;
 
 			if (Input.GetKey("up"))
 			{
@@ -114,14 +68,12 @@ public class EditMover : MonoBehaviour
 				transform.position -= transform.right * speed * Time.deltaTime;
 			}
 
-
-            if (_isDelAllowMover)
-            {
-				_isDelAllowMover = false;
+			if (_isDelAllowTarget)
+			{
+				_isDelAllowTarget = false;
 				//Debug.Log("why");
 				Destroy(gameObject);
 			}
-
 
 		}
 		else
