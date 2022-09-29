@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/EditScene.unity
     guid: ce199137a5b5e3448a21e1284acf0371
+  - enabled: 1
+    path: Assets/Scenes/EndingRoll.unity
+    guid: 8fc87d4358e41a84a921ad5af224e232
   m_configObjects: {}
