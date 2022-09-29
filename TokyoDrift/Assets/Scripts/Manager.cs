@@ -39,8 +39,8 @@ public class Manager : MonoBehaviour
     //state relative path
     static string path = Directory.GetCurrentDirectory();
 
-    private string pyExePath = path + @"\Assets\Python\sample_select_07.exe";
-    private string pyCodePath = path + @"\Assets\Python\sample_select_07.py";
+    private string pyExePath = path + @"\Assets\Python\sample_select_08.exe";
+    private string pyCodePath = path + @"\Assets\Python\sample_select_08.py";
     int countGoalMover = 0;
 
     //kito added 2
@@ -299,6 +299,7 @@ public class Manager : MonoBehaviour
             //   SimComplete();
             SimComplete();
         }
+        countGoalMover = 0;
     }
 
     void SimComplete()
@@ -309,7 +310,7 @@ public class Manager : MonoBehaviour
         loggerCompo.StopLogger();
 
         //Change scene
-        SceneManager.LoadScene("InitialScene");
+        SceneManager.LoadScene("EndingRoll");
 
     }
 
