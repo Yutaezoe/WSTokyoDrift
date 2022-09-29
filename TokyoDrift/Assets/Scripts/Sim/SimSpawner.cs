@@ -9,6 +9,7 @@ public class SimSpawner : MonoBehaviour
     [SerializeField, Header("Set Bus Prefab")] private GameObject BusPrefab;
     [SerializeField, Header("Set Target Master")] private Transform TargetMaster;
     [SerializeField, Header("Set Target Prefab")] private GameObject TargetPrefab;
+    [SerializeField, Header("Set Goal Prefab")] private GameObject GoalPrefab;
 
     // Start is called before the first frame update
     void Awake()
@@ -20,8 +21,13 @@ public class SimSpawner : MonoBehaviour
         Vector3[] loadTargetVector3;
         GameObject childTargetGameObject;
 
+        // Target
+        Vector3 loadGoalVector3;
+        GameObject goalGameObject;
+
 
         SaveManager.Load();
+        
 
         if (SaveManager.saveData.moverVector != null)
         {
@@ -37,6 +43,15 @@ public class SimSpawner : MonoBehaviour
             }
         }
 
+        if (SaveManager.saveData.targetGoalVector != null)
+        {
+            loadGoalVector3 = SaveManager.saveData.targetGoalVector;
+
+            goalGameObject = Instantiate(GoalPrefab, loadGoalVector3, Quaternion.identity);
+            goalGameObject.transform.SetParent(TargetMaster, true);
+
+        }
+
         if (SaveManager.saveData.targetVector != null)
         {
             loadTargetVector3 = SaveManager.saveData.targetVector;
@@ -48,7 +63,7 @@ public class SimSpawner : MonoBehaviour
             }
         }
 
-
+      
     }
 
 }
