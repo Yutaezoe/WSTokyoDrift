@@ -76,7 +76,7 @@ public class Mover : MonoBehaviour
     #endregion
 
     #region Setting Property
-    public int PropertyMoveID { get { return _MoveID; } }
+    public int PropertyMoveID { get { return _MoveID; } set { this._MoveID = value; } }
     public int PropertyTargettingPoint { get { return _nextUID; }}
     public int[] PropertyTargetID { get { return _TargetID; } set { this._TargetID = value; } }
 
@@ -289,8 +289,6 @@ public class Mover : MonoBehaviour
                 goalPosition = goalCheck.NearNodeVector3;
             }
         }
-
-        Debug.Log(startUID + "" + goalUID+$"({goalPosition})");
     }
 
     //Sako

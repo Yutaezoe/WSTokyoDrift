@@ -10,12 +10,11 @@ public class Logger : MonoBehaviour
 {
 
 
-    [SerializeField]
-    private GameObject moverMaster;
-    [SerializeField]
-    GameObject timer;
-    [SerializeField]
-    GameObject HUD;
+    [SerializeField] private GameObject moverMaster;
+    [SerializeField] GameObject timer;
+    [SerializeField] GameObject HUD;
+    [SerializeField] GameObject manager;
+
 
     private Transform[] arrayMover;
     private GameObject[] mover;
@@ -42,12 +41,8 @@ public class Logger : MonoBehaviour
         mover = new GameObject[arrayMover.Length];
         for (int i = 0; i < arrayMover.Length; i++)
         {
-            Debug.Log("arrayMover;  " + arrayMover[0]);
             mover[i] = arrayMover[i].gameObject;
-            Debug.Log("Mover;  " + mover);
-
         }
-
         using (var fileStream = new FileStream(path + @"\Assets\Python\csv\result.csv", FileMode.Open))
         {
             //Delate toPython.csv
@@ -61,6 +56,7 @@ public class Logger : MonoBehaviour
     {
         Timer timercompo = timer.GetComponent<Timer>();
         HUD HUDcompo = HUD.GetComponent<HUD>();
+        Manager ManagerComp = manager.GetComponent<Manager>();
         //timer for counting 1second
         timeleft -= Time.deltaTime;
         if (timeleft <= 0)
@@ -71,7 +67,7 @@ public class Logger : MonoBehaviour
                 //write moverID, targetID and time
                 for (int i = 0; i < mover.Length; i++)
                 {
-                    var moverComponent = mover[i].GetComponent<Mover>();
+                    Mover moverComponent = mover[i].GetComponent<Mover>();
                     moverMoverID.Add(moverComponent.PropertyMoveID);
                     moverTargetID.Add(moverComponent.PropertyTargettingPoint);
                     moverTime.Add(DateTime.Now);
@@ -86,13 +82,7 @@ public class Logger : MonoBehaviour
                     count += 1;
                 }
 
-
-                //write to csvfile
-
-                //StreamWriter file = new StreamWriter(path+@"\Assets\Python\csv\result.csv", true, Encoding.UTF8);
-
-                //file.WriteLine(string.Format("{0},{1},{2},{3}", moverMoverID[count], moverTargetID[count], moverTime[count],moverTimeCount[count]));
-                //file.Close();
+                ManagerComp.CheckSimComplete();
 
             }
             //reset counter 
@@ -107,4 +97,8 @@ public class Logger : MonoBehaviour
         loggerStatus = true;
     }
 
+    public void StopLogger()
+    {
+        loggerStatus = false;
+    }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 using System.Linq;
 using static UnityEngine.GraphicsBuffer;
 using Common;
@@ -29,17 +30,18 @@ public class Manager : MonoBehaviour
 
     //kito added
     private Transform[] arrayMover;
+    private Transform[] goalCheckArrayMover;
     private Transform[] arrayTarget;
     private int countMover;
     private int countTarget;
     private int countKickOfdistancePassive ;
-
+    private GameObject[] goalCheckmover;
     //state relative path
     static string path = Directory.GetCurrentDirectory();
 
     private string pyExePath = path + @"\Assets\Python\sample_select_07.exe";
     private string pyCodePath = path + @"\Assets\Python\sample_select_07.py";
-
+    int countGoalMover = 0;
 
     //kito added 2
     bool assignComplete = false;
@@ -61,13 +63,20 @@ public class Manager : MonoBehaviour
         //confirm mover and Target's count
         confirmMoverTargetCount();
 
+        goalCheckArrayMover = ComFunctions.GetChildren(busMaster.transform);
+        goalCheckmover = new GameObject[goalCheckArrayMover.Length];
+        for (int i = 0; i < arrayMover.Length; i++)
+        {
+            goalCheckmover[i] = arrayMover[i].gameObject;
+        }
+
+
     }
     private void Update()
     {
         //added by kito
         //Check if Assign Buber is kicked by ALL Mover every frame
         countDistancePassiveKick();
-
     }
     public bool distancePassive(int moverID, int[] targetID, int[] distance)
     {
@@ -154,6 +163,8 @@ public class Manager : MonoBehaviour
     void MakeCSVdistancePassive()
     {
 
+        DescendingChangeOrderOfArray();
+
         using (var fileStream = new FileStream(path+ @"\Assets\Python\csv\toPython.csv", FileMode.Open))
         {
             //Delate toPython.csv
@@ -161,7 +172,6 @@ public class Manager : MonoBehaviour
             // 結果としてファイルのサイズが0になります。
             fileStream.SetLength(0);
         }
-
 
         StreamWriter file = new StreamWriter(path+@"\Assets\Python\csv\toPython.csv", true, Encoding.UTF8);
         for (int i = 0; i < _moverID.Count; i++)
@@ -234,6 +244,73 @@ public class Manager : MonoBehaviour
             }
 
         }
+    }
+
+    void DescendingChangeOrderOfArray()
+    {
+
+        int iterationNum = 0;
+
+        for (int i = 0; i < _targetID.Count; i++)
+        {
+            for (int j = 1; j < _moverID.Count - i; j++)
+            {
+                // 処理回数の値を増やします。
+                iterationNum++;
+
+                // 隣り合う要素と比較し、順序が逆であれば入れ替えます。
+                if (_moverID[j] > _moverID[j - 1])
+                {
+
+                    // 配列の要素の交換を行います。
+                    int moverTemp = _moverID[j];
+                    _moverID[j] = _moverID[j - 1];
+                    _moverID[j - 1] = moverTemp;
+
+                    int targetTemp = _targetID[j];
+                    _targetID[j] = _targetID[j - 1];
+                    _targetID[j - 1] = targetTemp;
+
+                    int distanceTemp = _distance[j];
+                    _distance[j] = _distance[j - 1];
+                    _distance[j - 1] = distanceTemp;
+                }
+            }
+
+        }
+    }
+
+
+    public void CheckSimComplete()
+    {
+
+        for (int i = 0; i < goalCheckmover.Length; i++)
+        {
+            Mover moverComponent = goalCheckmover[i].GetComponent<Mover>();
+
+            if (moverComponent.PropertyGoalTrigger == true)
+            {
+                countGoalMover += 1;
+            }
+        }
+
+        if (countGoalMover >= arrayMover.Length)
+        {
+            //   SimComplete();
+            SimComplete();
+        }
+    }
+
+    void SimComplete()
+    {
+
+        //Stop Logger 
+        var loggerCompo = logger.GetComponent<Logger>();
+        loggerCompo.StopLogger();
+
+        //Change scene
+        SceneManager.LoadScene("InitialScene");
+
     }
 
 }
