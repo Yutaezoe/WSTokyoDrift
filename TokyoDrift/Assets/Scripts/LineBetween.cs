@@ -34,6 +34,7 @@ public class LineBetween : MonoBehaviour
 
             pointAPosition = LineArray.getAPosition.position;
             pointBPosition = LineArray.getBPosition.position;
+            int lineWeight = LineArray.getLineWeight;
 
 
             // LineRendererコンポーネントをゲームオブジェクトにアタッチする
@@ -51,8 +52,9 @@ public class LineBetween : MonoBehaviour
 
         lineRenderer.startWidth = 0.1f;                   // 開始点の太さを0.1にする
         lineRenderer.endWidth = 0.1f;                     // 終了点の太さを0.1にする
-        lineRenderer.startColor = Color.red;
-        lineRenderer.endColor = Color.green;
+
+        lineRenderer.startColor = Color.Lerp(Color.red, Color.green, (float)lineWeight);
+        lineRenderer.endColor = Color.Lerp(Color.red, Color.green, (float)lineWeight);
 
             
         }

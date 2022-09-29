@@ -117,9 +117,9 @@ public class Mover : MonoBehaviour
             _IsGaolTrigger = true;
 
             //Eliminate the mover in a simulated manner
-            Vector3 reScale = gameObject.transform.localScale;
+            Vector3 reScale = this.transform.localScale;
             reScale *=  0.01f;
-            gameObject.transform.localScale = reScale;
+            this.transform.localScale = reScale;
             return;
         }
         else
@@ -321,7 +321,7 @@ public class Mover : MonoBehaviour
 
         List<string> Nodename = new List<string>();
 
-        Dikstra graph = new Dikstra(lineChildren.Length + 1);
+        Dikstra graph = new Dikstra(nodeChildren.Length);
 
         foreach (Transform setTrans in lineChildren)
         {
@@ -351,14 +351,14 @@ public class Mover : MonoBehaviour
         
         long[] minDistaces = graph.GetMinCost(start, goal, enumArray.Count());
 
-        foreach(long c in graph.Cost)
-        {
-            //Debug.Log(c);
-        }
-        foreach (int r in graph.RouteReturn)
-        {
-            //Debug.Log(r);
-        }
+        //foreach(long c in graph.Cost)
+        //{
+        //    Debug.Log(c);
+        //}
+        //foreach (int r in graph.RouteReturn)
+        //{
+        //    Debug.Log(r);
+        //}
 
         costReturn = graph.Cost;
         routeReturn = graph.RouteReturn;
@@ -442,7 +442,7 @@ public class Mover : MonoBehaviour
     //Sako
     private void DecesionTarget()
     {
-
+        Debug.Log("Next Start Point is " + startUID);
         CalcDikstra(startUID, _nextUID);
 
         //�^�[�Q�b�g�̒�����ŒZ�o�H�̂��̂𒊏o
@@ -450,10 +450,12 @@ public class Mover : MonoBehaviour
         long costRetrunTemp = long.MaxValue;
         Target.TargetStatus statusTemp;
         int numIndex = 0;
+
         foreach (Transform setTarget in targetChildren)
         {
             statusTemp = ComFunctions.GetChildrenComponent<Target>(setTarget).StatusOfPikking;
 
+            Debug.Log($"num:{stanum}, cost{costReturn[stanum]}");
 
             if (targetNearNodeId[stanum] == goalUID && targetChildren.Length != 1)
             {
@@ -466,14 +468,15 @@ public class Mover : MonoBehaviour
                 continue;
             }
 
-            if (costReturn[stanum] < costRetrunTemp)
+            if (costReturn[targetNearNodeId[stanum]] < costRetrunTemp)
             {
-                costRetrunTemp = costReturn[stanum];
+                costRetrunTemp = costReturn[targetNearNodeId[stanum]];
                 _nextUID = targetNearNodeId[stanum];
                 numIndex = stanum;
             }
             stanum++;
         }
+        Debug.Log("Target is " + targetChildren[numIndex] + "cost:" + costReturn[numIndex] );
 
         //�_���̃^�[�Q�b�g�̏�ԕύX�A�ύX�ł���^�[�Q�b�g�Ȃ��ꍇ�̓S�[����
         if (targetNearNodeId[numIndex] != goalUID)
@@ -547,21 +550,24 @@ public class Mover : MonoBehaviour
 
     private void RotateFunction()
     {
-        Vector3 movement = new Vector3(nodePoints[nodeCounter].x, 0, nodePoints[nodeCounter].z).normalized;
+        Transform moverTrans = this.transform;
 
-        if (movement == Vector3.zero)
+        float errorZ = (float)transform.position.z - (float)nodePoints[nodeCounter].z;
+        float errorX = (float)transform.position.x - (float)nodePoints[nodeCounter].x;
+
+        if(Mathf.Abs(errorZ) < 0.1f)
         {
-            return;
+            Vector3 chaneAngle = moverTrans.eulerAngles;
+            chaneAngle.y = 90;
+            moverTrans.eulerAngles = chaneAngle;
+           
         }
-
-        Quaternion targetRotation = Quaternion.LookRotation(movement);
-
-        targetRotation = Quaternion.RotateTowards(
-            transform.rotation,
-            targetRotation,
-            360 *100);
-
-        gameObject.transform.rotation = targetRotation;
+        else if (Mathf.Abs(errorX) < 0.1f)
+        {
+            Vector3 chaneAngle = moverTrans.eulerAngles;
+            chaneAngle.y = 0;
+            moverTrans.eulerAngles = chaneAngle;
+        }
     }
 
     #endregion
