@@ -56,10 +56,10 @@ public class LineBetween : MonoBehaviour
             Color weightColor = new Color(0.5f, 0.5f, 0, 1);
             float correctionFront = 0.5f - (float)lineWeight/10f;
             float correctionEnd =  0.5f * (float)lineWeight/10f;
-            if (lineWeight <= 5)
+            if (lineWeight < 5)
             {
-                weightColor = new Color(0.5f - correctionFront, 0.5f + correctionFront, 0, 1);
-            }else
+                weightColor = new Color(0, 0.5f + correctionFront, 0, 1);
+            }else if(lineWeight > 5)
             {
                 weightColor = new Color((float)lineWeight/10f, 0, 0, 1);
             }

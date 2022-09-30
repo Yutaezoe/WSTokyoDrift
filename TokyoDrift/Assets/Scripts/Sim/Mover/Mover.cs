@@ -95,20 +95,20 @@ public class Mover : MonoBehaviour
     void Start()
     {
         //Ezoe
-        //Field�̏�Ԃ�c��
+        //Getting Field data
         SettingComponent();
 
         //Sako
-        //�X�^�[�g�n�_�ƃS�[���n�_���`
+        //Getting Start and Goal Position 
         SettingStartAndGoal();
 
         //Ezoe
-        //�}�l�[�W���[�֑���p�̏����_�C�N�X�g���Ōv�Z
+        //Calculating Dikstra result
         CalcDikstra(startUID, _nextUID);
     }
 
     // Update is called once per frame
-    // Update Area is �l�X�g�[�ߒ���
+    // Update Area is deep nest! Be careful!
     void Update()
     {
         float distanceFromGoal = Vector3.Distance(transform.position, goalPosition);
@@ -185,7 +185,7 @@ public class Mover : MonoBehaviour
         List<Vector3> lineToNodeVectorList = new();
         List<Vector3> TargetVector3 = new List<Vector3>();
 
-        // Line���UID �d�� �ڑ��ʒu�̎擾���s��
+        // Getting Line Component data
         foreach (Transform setLineChild in lineChildren)
         {
             lineComponent = ComFunctions.GetChildrenComponent<Line>(setLineChild);
@@ -205,7 +205,7 @@ public class Mover : MonoBehaviour
         lineFromNodeVector = lineFromNodeVectorList.ToArray();
         lineToNodeVector = lineToNodeVectorList.ToArray();
 
-        // Target�̈ʒu�̎擾���s��
+        // Getting Target Position
         foreach (Transform setTarget in targetChildren)
         {
             targetComponent = ComFunctions.GetChildrenComponent<Target>(setTarget);
@@ -253,7 +253,6 @@ public class Mover : MonoBehaviour
             }
 
             targetNearNodeList.Add(tempNearNode);
-            //Debug.Log(tempNearNode);
         }
 
         targetNearNodeId = targetNearNodeList.ToArray();
@@ -289,6 +288,7 @@ public class Mover : MonoBehaviour
                 goalPosition = goalCheck.NearNodeVector3;
             }
         }
+        Debug.Log("Goal is " + goalUID);
     }
 
     //Sako
@@ -368,22 +368,6 @@ public class Mover : MonoBehaviour
     {
         List<Vector3> nodeTrans = new ();
 
-        //for (int t = 0; t < routeReturn.Length; t++)
-        //{
-        //    foreach (int setNode in lineToNodeUID)
-        //    {
-        //        if (lineFromNodeUID[setNode] == routeReturn[t])
-        //        {
-        //            nodeTrans.Add(lineFromNodeVector[setNode]);
-        //        } 
-        //        else if (lineToNodeUID[setNode] == routeReturn[t])
-        //        {
-        //            nodeTrans.Add(lineToNodeVector[setNode]);
-        //        }
-        //    }
-        //    nodePoints = nodeTrans.ToArray();
-        //}
-
         for (int t = 0; t < routeReturn.Length; t++)
         {
             foreach (Transform setNode in nodeChildren)
@@ -405,7 +389,7 @@ public class Mover : MonoBehaviour
 
         nodeVector = new Vector3[nodePoints.Length];
 
-        //�s�v�ł́H
+        //Setting (x,y,z)position
         for (int i = 0; i < nodeVector.Length; i++)
         {
             nodeVector[i] = nodePoints[i];
@@ -416,25 +400,23 @@ public class Mover : MonoBehaviour
     //Sako
     private void SettingEachTargetDistance()
     {
-        /////�}�l�[�W���[�ւ̎󂯓n���p�z���`
+        /////List for Manager
         List<int> targetIDList = new List<int>();
         List<int> minDistance = new List<int>();
         /////
         /////////�}�l�[�W���[�ւ̎󂯓n���p�z��쐬
         for (int setTarget = 0; setTarget < targetNearNodeId.Length; setTarget++)
         {
-            targetIDList.Add(targetNearNodeId[setTarget]);
-            minDistance.Add((int)costReturn[targetNearNodeId[setTarget]]);
+            if (targetNearNodeId[setTarget] != goalUID)
+            {
+                targetIDList.Add(targetNearNodeId[setTarget]);
+                minDistance.Add((int)costReturn[targetNearNodeId[setTarget]]);
+            }
         }
 
         _TargetID = targetIDList.ToArray();
         eachTargetDistance = minDistance.ToArray();
 
-        //for (int t = 0; t < targetNearNodeId.Length; t++)
-        //{
-        //    Debug.Log($"TargetID:{TargetID[t]} ,Cost:{eachTargetDistance[t]} ");
-        //}
-        /////////
     }
 
     //Sako
@@ -517,7 +499,7 @@ public class Mover : MonoBehaviour
     private void AssignWait()
     {
         bool assignTriger;
-        //Manager�N���X�̃C���X�^���X�̎d���v����
+        //Manager Instantiate
         Manager manageComponent = manager.GetComponent<Manager>();
         assignTriger = manageComponent.PropertyAssign;
         if (!assignTriger)
